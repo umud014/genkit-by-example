@@ -18,7 +18,7 @@ export default function SimpleChatbotApp() {
   const [pendingMessages, setPendingMessages] = useState<MessageData[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const bottomOfChat = useRef<HTMLElement>(null);
+  const bottomOfChat = useRef<HTMLDivElement>(null);
   const { config } = useContext(DemoConfig);
 
   useEffect(() => {
