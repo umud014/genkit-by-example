@@ -7,11 +7,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function toReadableStream(response: GenerateStreamResponse) {
+export function toReadableStream(
+  response: GenerateStreamResponse,
+  transform?: (chunk: GenerateResponseChunkData & { output: unknown }) => any
+) {
   return new ReadableStream({
     async pull(controller) {
       for await (const chunk of response.stream) {
-        controller.enqueue(`data: ${JSON.stringify({ message: chunk.toJSON() })}\n\n`);
+        controller.enqueue(
+          `data: ${JSON.stringify({
+            message: transform ? transform(chunk) : { ...chunk.toJSON(), output: chunk.output },
+          })}\n\n`
+        );
       }
       controller.enqueue(`data: {"result": null}`);
       controller.close();
@@ -19,11 +26,7 @@ export function toReadableStream(response: GenerateStreamResponse) {
   });
 }
 
-export async function* postAndStreamJSON<
-  ReqData = unknown,
-  ChunkData = unknown,
-  ResultData = unknown
->(
+export async function* post<ReqData = unknown, ChunkData = unknown, ResultData = unknown>(
   path: string,
   data: ReqData
 ): AsyncIterable<{

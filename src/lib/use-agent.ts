@@ -2,7 +2,7 @@ import type { GenerateResponseData, MessageData } from "genkit";
 import type { GenerateRequest } from "./schema";
 import type { GenerateResponseChunkData } from "genkit/model";
 import { useEffect, useState } from "react";
-import { postAndStreamJSON } from "./utils";
+import { post } from "./utils";
 
 export interface AgentHookOptions {
   /** The URL endpoint of the agent e.g. `/api/agent`. */
@@ -36,7 +36,7 @@ export default function useAgent<T = GenerateRequest>({ endpoint }: AgentHookOpt
     if (userMessage) setMessages([...messages, userMessage]);
 
     setIsLoading(true);
-    const stream = postAndStreamJSON<T, ChunkData>(endpoint, request);
+    const stream = post<T, ChunkData>(endpoint, request);
     const newMessages: MessageData[] = [];
     for await (const chunk of stream) {
       console.log(chunk);

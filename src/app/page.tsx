@@ -1,13 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { demos } from "@/data";
 import Link from "next/link";
-import Markdown from "react-markdown";
-
-const MD = `# Genkit by Example
-
-This repository contains a set of pre-built examples of using Firebase Genkit to build a variety of AI-powered features for Next.js applications. Choose an example on the left or click a link below to get started:
-
-- **[Simple Chatbot](/chatbot-simple):** A simple chatbot with a customizable system message.`;
 
 export default function Home() {
   return (

@@ -7,7 +7,8 @@ export default function CodeBlock({ source }: { source: string }) {
       language="javascript"
       wrapLongLines={true}
       style={theme}
-      customStyle={{ fontSize: "12px", width: "100%" }}
+      customStyle={{ fontSize: "12px", width: "100%", whiteSpace: "pre-wrap" }}
+      codeTagProps={{ style: { whiteSpace: "pre-wrap" } }}
     >
       {source}
     </SyntaxHighlighter>

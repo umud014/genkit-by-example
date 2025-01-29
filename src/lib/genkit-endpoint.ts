@@ -5,7 +5,7 @@ import { toReadableStream } from "./utils";
 
 export type ChatHandler<T = z.infer<typeof GenerateRequestSchema>> = (
   data: T
-) => GenerateStreamResponse;
+) => GenerateStreamResponse<any>;
 
 export interface ChatEndpointOptions<T extends z.ZodTypeAny = z.ZodTypeAny> {
   schema?: T;
@@ -13,8 +13,12 @@ export interface ChatEndpointOptions<T extends z.ZodTypeAny = z.ZodTypeAny> {
 
 type Endpoint = (request: NextRequest) => Promise<NextResponse>;
 
-export default function chatEndpoint(handler: ChatHandler): Endpoint;
-export default function chatEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
+export default function genkitEndpoint(handler: ChatHandler): Endpoint;
+export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
+  options: ChatEndpointOptions<T>,
+  handler: ChatHandler
+): Endpoint;
+export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
   optionsOrHandler: ChatEndpointOptions<T> | ChatHandler<z.infer<T>>,
   handler?: ChatHandler
 ): Endpoint {

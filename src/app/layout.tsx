@@ -11,7 +11,7 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Genkit Patterns",
+  title: "Genkit by Example",
   description: "Common patterns for apps incorporating GenAI, powered by Firebase Genkit.",
 };
 
