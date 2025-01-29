@@ -23,7 +23,7 @@ export default function Home() {
       <Card className="p-4 mt-6">
         <table>
           {demos.map((d) => (
-            <tr className="border-b border-zinc-800 last:border-none">
+            <tr className="border-b border-zinc-800 last:border-none" key={d.id}>
               <th scope="col" className="text-nowrap text-lg p-2">
                 <Link href={`/${d.id}`} className="p-4 hover:bg-zinc-800 underline rounded-lg">
                   {d.name}

@@ -3,7 +3,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, Send } from "lucide-react"; // Or any other send icon you prefer
+import { Send } from "lucide-react"; // Or any other send icon you prefer
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { applyChunk, cn, postAndStreamJSON } from "@/lib/utils"; // Import cn for class name merging

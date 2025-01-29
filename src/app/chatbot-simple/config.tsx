@@ -17,11 +17,11 @@ export default function SimpleChatbotConfig() {
         </Label>
         <Textarea
           placeholder="You are a helpful assistant. Try to answer the user's queries to the best of your ability."
-          value={config?.system}
+          value={config?.system?.[0]?.text}
           id="form-system"
           name="system"
           onInput={(e) => {
-            setConfig?.({ system: (e.target as HTMLTextAreaElement).value });
+            setConfig?.({ system: [{ text: (e.target as HTMLTextAreaElement).value }] });
           }}
         />
       </CardContent>

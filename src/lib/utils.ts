@@ -19,10 +19,18 @@ export function toReadableStream(response: GenerateStreamResponse) {
   });
 }
 
-export async function* postAndStreamJSON<ReqData, ResData>(
+export async function* postAndStreamJSON<
+  ReqData = unknown,
+  ChunkData = unknown,
+  ResultData = unknown
+>(
   path: string,
   data: ReqData
-): AsyncIterable<ResData> {
+): AsyncIterable<{
+  message: ChunkData;
+  result: ResultData;
+  error: { message: string; status: string };
+}> {
   const response = await fetch(path, {
     method: "POST",
     headers: {
@@ -55,7 +63,7 @@ export async function* postAndStreamJSON<ReqData, ResData>(
         const jsonStr = line.substring("data: ".length);
         try {
           const chunk = JSON.parse(jsonStr);
-          yield chunk.message; // Assuming the actual data is under the "message" key
+          yield chunk; // Assuming the actual data is under the "message" key
         } catch (error) {
           console.error("Failed to parse JSON chunk:", jsonStr, error);
         }

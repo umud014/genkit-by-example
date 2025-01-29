@@ -15,16 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
-
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Simple Chatbot",
-      url: "/chatbot-simple",
-    },
-  ],
-};
+import { demos } from "@/data";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -49,24 +40,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu className="gap-2">
-            {data.navMain.map((item) => (
-              <SidebarMenuItem key={item.title}>
+            {demos.map((item) => (
+              <SidebarMenuItem key={item.id}>
                 <SidebarMenuButton asChild>
-                  <Link href={item.url} className="font-medium">
-                    {item.title}
+                  <Link href={`/${item.id}`} className="font-medium text-lg">
+                    {item.name}
                   </Link>
                 </SidebarMenuButton>
-                {/* {item.items?.length ? (
-                  <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                ) : null} */}
               </SidebarMenuItem>
             ))}
           </SidebarMenu>

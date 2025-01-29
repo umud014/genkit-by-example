@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@genkit-ai/googleai':
-        specifier: 1.0.0-rc.6
-        version: 1.0.0-rc.6(genkit@1.0.0-rc.6)
+        specifier: 1.0.0-rc.7
+        version: 1.0.0-rc.7(genkit@1.0.0-rc.7)
       '@radix-ui/react-avatar':
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -48,8 +48,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       genkit:
-        specifier: 1.0.0-rc.6
-        version: 1.0.0-rc.6
+        specifier: 1.0.0-rc.7
+        version: 1.0.0-rc.7
       lucide-react:
         specifier: ^0.474.0
         version: 0.474.0(react@19.0.0)
@@ -125,16 +125,16 @@ packages:
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
 
-  '@genkit-ai/ai@1.0.0-rc.6':
-    resolution: {integrity: sha512-9cw5p6nTwBCMOh9xnDsXzfXc4krHLL/HFwelOa7XIxbaII+BTbF1hfCw+EroepTyNRHNy3wtI4kg+m0yFjnZBA==}
+  '@genkit-ai/ai@1.0.0-rc.7':
+    resolution: {integrity: sha512-AiaO5NAKSQPZ7y7aAhZ15UW2BuNx/jm3NPdaaDuVMgXFp8/O6BKlrmB2IY5+LKiJ7Vdn8CKikZvbdG6pUeIYzA==}
 
-  '@genkit-ai/core@1.0.0-rc.6':
-    resolution: {integrity: sha512-wf1/Zqyz8oO10VI6PYpbV8vU/OkuSfXrL5hzUKq0n74RsEWSGZb1WcH9cV3uKySwa1+3WgFGfssPwdvKjfHIig==}
+  '@genkit-ai/core@1.0.0-rc.7':
+    resolution: {integrity: sha512-Jzffsi2jEeRUAvTXAxlsxFbmw27kKnKgrVYycEfqtPA4YM3B3rd+JU/z4jYvP/QeiUX42fjiyN7GqAaE1HRtfA==}
 
-  '@genkit-ai/googleai@1.0.0-rc.6':
-    resolution: {integrity: sha512-QZn82lnPjT3/grZ+e43n0c6KEREo14d7KJuuFLwDbyRcL/xKUKeSKVsMGJ3F0G64VspAnOcpUU/ndSDdOnaNjQ==}
+  '@genkit-ai/googleai@1.0.0-rc.7':
+    resolution: {integrity: sha512-s091/2OP0bRu3PMZBdRr1nmjzK6UtHMd8Rddn5EJ4Ra5PUWnkDp4w4S4NOR/rXrKg+cjwb2DhbSjrNgtk4uUPQ==}
     peerDependencies:
-      genkit: 1.0.0-rc.6
+      genkit: 1.0.0-rc.7
 
   '@google/generative-ai@0.21.0':
     resolution: {integrity: sha512-7XhUbtnlkSEZK15kN3t+tzIMxsbKm/dSkKBFalj+20NvPKe1kBY7mR2P7vuijEn+f06z5+A8bVGKO0v39cr6Wg==}
@@ -1329,8 +1329,8 @@ packages:
     resolution: {integrity: sha512-Jh/AIwwgaxan+7ZUUmRLCjtchyDiqh4KjBJ5tW3plBZb5iL/BPcso8A5DlzeD9qlw0duCamnNdpFjxwaT0KyKg==}
     engines: {node: '>=14'}
 
-  genkit@1.0.0-rc.6:
-    resolution: {integrity: sha512-doh4mE5vxFc+r09OtoyW1PrcaNFadZgU46LMzbdybz1Ky0RJA/pqfLoT68Mri7yjHlhONMFlwesrwoNzgIj5QQ==}
+  genkit@1.0.0-rc.7:
+    resolution: {integrity: sha512-Lzu5nlEMLQPmVjnfMNS1EZdL5qlYuJVRB2cBB/qOttb+0WZTGWq1RbYuzbkdQVB3RAcXTvp5bPIEf1iVAgwrAw==}
 
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
@@ -2350,9 +2350,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
-  '@genkit-ai/ai@1.0.0-rc.6':
+  '@genkit-ai/ai@1.0.0-rc.7':
     dependencies:
-      '@genkit-ai/core': 1.0.0-rc.6
+      '@genkit-ai/core': 1.0.0-rc.7
       '@opentelemetry/api': 1.9.0
       '@types/node': 20.17.16
       colorette: 2.0.20
@@ -2364,7 +2364,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@genkit-ai/core@1.0.0-rc.6':
+  '@genkit-ai/core@1.0.0-rc.7':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/context-async-hooks': 1.30.1(@opentelemetry/api@1.9.0)
@@ -2387,10 +2387,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@genkit-ai/googleai@1.0.0-rc.6(genkit@1.0.0-rc.6)':
+  '@genkit-ai/googleai@1.0.0-rc.7(genkit@1.0.0-rc.7)':
     dependencies:
       '@google/generative-ai': 0.21.0
-      genkit: 1.0.0-rc.6
+      genkit: 1.0.0-rc.7
       google-auth-library: 9.15.1
       node-fetch: 3.3.2
     transitivePeerDependencies:
@@ -3534,10 +3534,10 @@ snapshots:
       - encoding
       - supports-color
 
-  genkit@1.0.0-rc.6:
+  genkit@1.0.0-rc.7:
     dependencies:
-      '@genkit-ai/ai': 1.0.0-rc.6
-      '@genkit-ai/core': 1.0.0-rc.6
+      '@genkit-ai/ai': 1.0.0-rc.7
+      '@genkit-ai/core': 1.0.0-rc.7
       uuid: 10.0.0
     transitivePeerDependencies:
       - supports-color
