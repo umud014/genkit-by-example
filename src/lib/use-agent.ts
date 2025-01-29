@@ -15,7 +15,9 @@ type ChunkData = {
   result?: GenerateResponseData;
 };
 
-export default function useAgent<T = GenerateRequest>({ endpoint }: AgentHookOptions) {
+export default function useAgent<T = GenerateRequest>({
+  endpoint,
+}: AgentHookOptions) {
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [pendingMessages, setPendingMessages] = useState<MessageData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +38,10 @@ export default function useAgent<T = GenerateRequest>({ endpoint }: AgentHookOpt
     if (userMessage) setMessages([...messages, userMessage]);
 
     setIsLoading(true);
-    const stream = post<T, ChunkData>(endpoint, request);
+    const stream = post<T, GenerateResponseChunkData, GenerateResponseData>(
+      endpoint,
+      request
+    );
     const newMessages: MessageData[] = [];
     for await (const chunk of stream) {
       console.log(chunk);
@@ -45,7 +50,10 @@ export default function useAgent<T = GenerateRequest>({ endpoint }: AgentHookOpt
         console.log(message.role, message.index, message.content[0]);
         newMessages.splice(message.index!, 1, {
           role: message.role!,
-          content: [...(newMessages[message.index!]?.content || []), ...message.content],
+          content: [
+            ...(newMessages[message.index!]?.content || []),
+            ...message.content,
+          ],
         });
         setPendingMessages([...newMessages]);
       } else if (chunk.error) {
@@ -55,5 +63,11 @@ export default function useAgent<T = GenerateRequest>({ endpoint }: AgentHookOpt
     setIsLoading(false);
   };
 
-  return { isLoading, error, messages: [...messages, ...pendingMessages], setMessages, send };
+  return {
+    isLoading,
+    error,
+    messages: [...messages, ...pendingMessages],
+    setMessages,
+    send,
+  };
 }
