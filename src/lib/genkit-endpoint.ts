@@ -5,7 +5,7 @@ import { toReadableStream } from "./utils";
 
 export type ChatHandler<T = z.infer<typeof GenerateRequestSchema>> = (
   data: T
-) => GenerateStreamResponse<any>;
+) => GenerateStreamResponse<any> | Promise<GenerateStreamResponse<any>>;
 
 export interface ChatEndpointOptions<T extends z.ZodTypeAny = z.ZodTypeAny> {
   schema?: T;
