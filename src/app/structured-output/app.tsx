@@ -1,7 +1,7 @@
 "use client";
 
 import { post } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { CharacterSheet } from "./schema";
@@ -11,8 +11,10 @@ import React from "react";
 
 export default function StructuredOutputApp() {
   const [prompt, setPrompt] = useState<string>("");
-  const [character, setCharacter] = useState<Partial<CharacterSheet | null>>(null);
+  const [character, setCharacter] =
+    useState<Partial<CharacterSheet | null>>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const promptTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const PulseDot = () => {
     return (
@@ -26,12 +28,12 @@ export default function StructuredOutputApp() {
 
   const generateCharacter = async (prompt: string) => {
     setIsLoading(true);
-    const stream = post<{ prompt: string }, { output: Partial<CharacterSheet> }>(
-      "/structured-output/api",
-      {
-        prompt,
-      }
-    );
+    const stream = post<
+      { prompt: string },
+      { output: Partial<CharacterSheet> }
+    >("/structured-output/api", {
+      prompt,
+    });
     for await (const chunk of stream) {
       console.log(chunk.message);
       if (chunk.message) setCharacter(chunk.message.output);
@@ -41,7 +43,9 @@ export default function StructuredOutputApp() {
 
   return (
     <div className="container mx-auto p-4 max-w-screen-sm ">
-      <h1 className="text-2xl text-center font-bold mb-4">D&D Character Generator</h1>
+      <h1 className="text-2xl text-center font-bold mb-4">
+        D&D Character Generator
+      </h1>
       {!character ? (
         <div className="flex flex-col gap-4 mx-auto">
           <div className="flex flex-col">
@@ -67,23 +71,31 @@ export default function StructuredOutputApp() {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
+          <div className="text-sm text-gray-400 italic">Prompt: {prompt}</div>
           <Button
             variant="outline"
             className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            onClick={() => setCharacter(null)}
+            onClick={() => {
+              setCharacter(null);
+              setPrompt(""); // Clear the textarea
+            }}
           >
             Reset
           </Button>
           <Card className="bg-gray-900 border-gray-700 rounded-lg shadow-md">
             <CardHeader className="px-4 py-2 bg-gray-800 border-b border-gray-700">
-              <CardTitle className="text-xl font-bold">Character Sheet</CardTitle>
+              <CardTitle className="text-xl font-bold">
+                Character Sheet
+              </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 p-4">
               {character && (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-yellow-200">Character Info</h3>
+                      <h3 className="text-lg font-semibold text-yellow-200">
+                        Character Info
+                      </h3>
                       <div className="grid grid-cols-2 gap-2">
                         <span className="font-semibold">Name:</span>{" "}
                         <span>{character.name || <PulseDot />}</span>
@@ -94,30 +106,52 @@ export default function StructuredOutputApp() {
                         <span className="font-semibold">Level:</span>{" "}
                         <span>{character.level || <PulseDot />}</span>
                         <span className="font-semibold">Experience:</span>{" "}
-                        <span>{character.experiencePoints || <PulseDot />}</span>
+                        <span>
+                          {character.experiencePoints || <PulseDot />}
+                        </span>
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-yellow-200">Ability Scores</h3>
+                      <h3 className="text-lg font-semibold text-yellow-200">
+                        Ability Scores
+                      </h3>
                       <div className="grid grid-cols-2 gap-2">
                         <span className="font-semibold">Strength:</span>{" "}
-                        <span>{character.abilityScores?.strength || <PulseDot />}</span>
+                        <span>
+                          {character.abilityScores?.strength || <PulseDot />}
+                        </span>
                         <span className="font-semibold">Dexterity:</span>{" "}
-                        <span>{character.abilityScores?.dexterity || <PulseDot />}</span>
+                        <span>
+                          {character.abilityScores?.dexterity || <PulseDot />}
+                        </span>
                         <span className="font-semibold">Constitution:</span>{" "}
-                        <span>{character.abilityScores?.constitution || <PulseDot />}</span>
+                        <span>
+                          {character.abilityScores?.constitution || (
+                            <PulseDot />
+                          )}
+                        </span>
                         <span className="font-semibold">Intelligence:</span>{" "}
-                        <span>{character.abilityScores?.intelligence || <PulseDot />}</span>
+                        <span>
+                          {character.abilityScores?.intelligence || (
+                            <PulseDot />
+                          )}
+                        </span>
                         <span className="font-semibold">Wisdom:</span>{" "}
-                        <span>{character.abilityScores?.wisdom || <PulseDot />}</span>
+                        <span>
+                          {character.abilityScores?.wisdom || <PulseDot />}
+                        </span>
                         <span className="font-semibold">Charisma:</span>{" "}
-                        <span>{character.abilityScores?.charisma || <PulseDot />}</span>
+                        <span>
+                          {character.abilityScores?.charisma || <PulseDot />}
+                        </span>
                       </div>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-yellow-200">Combat Stats</h3>
+                      <h3 className="text-lg font-semibold text-yellow-200">
+                        Combat Stats
+                      </h3>
                       <div className="grid grid-cols-2 gap-2">
                         <span className="font-semibold">Hit Points:</span>{" "}
                         <span>{character.hitPoints || <PulseDot />}</span>
@@ -128,7 +162,9 @@ export default function StructuredOutputApp() {
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-yellow-200">Background</h3>
+                      <h3 className="text-lg font-semibold text-yellow-200">
+                        Background
+                      </h3>
                       <div className="grid grid-cols-2 gap-2">
                         <span className="font-semibold">Alignment:</span>{" "}
                         <span>{character.alignment || <PulseDot />}</span>
@@ -144,11 +180,15 @@ export default function StructuredOutputApp() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <div>
                         <span className="font-semibold">Proficiencies:</span>{" "}
-                        <span>{character.proficiencies?.join(", ") || <PulseDot />}</span>
+                        <span>
+                          {character.proficiencies?.join(", ") || <PulseDot />}
+                        </span>
                       </div>
                       <div>
                         <span className="font-semibold">Languages:</span>{" "}
-                        <span>{character.languages?.join(", ") || <PulseDot />}</span>
+                        <span>
+                          {character.languages?.join(", ") || <PulseDot />}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -159,20 +199,30 @@ export default function StructuredOutputApp() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <div>
                         <span className="font-semibold">Equipment:</span>{" "}
-                        <span>{character.equipment?.join(", ") || <PulseDot />}</span>
+                        <span>
+                          {character.equipment?.join(", ") || <PulseDot />}
+                        </span>
                       </div>
                       <div>
                         <span className="font-semibold">Inventory:</span>{" "}
-                        <span>{character.inventory?.join(", ") || <PulseDot />}</span>
+                        <span>
+                          {character.inventory?.join(", ") || <PulseDot />}
+                        </span>
                       </div>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-yellow-200">Personal Details</h3>
+                    <h3 className="text-lg font-semibold text-yellow-200">
+                      Personal Details
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <div>
-                        <span className="font-semibold">Personality Traits:</span>{" "}
-                        <span>{character.personalityTraits || <PulseDot />}</span>
+                        <span className="font-semibold">
+                          Personality Traits:
+                        </span>{" "}
+                        <span>
+                          {character.personalityTraits || <PulseDot />}
+                        </span>
                       </div>
                       <div>
                         <span className="font-semibold">Ideals:</span>{" "}
@@ -189,7 +239,9 @@ export default function StructuredOutputApp() {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-yellow-200">Notes</h3>
+                    <h3 className="text-lg font-semibold text-yellow-200">
+                      Notes
+                    </h3>
                     <div>
                       <span className="font-semibold">Additional Notes:</span>{" "}
                       <span>{character.notes || <PulseDot />}</span>
