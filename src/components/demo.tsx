@@ -8,7 +8,9 @@ import { Button } from "./ui/button";
 import { Github } from "lucide-react";
 
 async function loadReadme(demoName: string): Promise<string> {
-  const file = await promises.readFile(`src/app/${demoName}/README.md`, { encoding: "utf8" });
+  const file = await promises.readFile(`src/app/${demoName}/README.md`, {
+    encoding: "utf8",
+  });
   return file.split("\n").slice(2).join("\n").trim();
 }
 
@@ -19,7 +21,9 @@ async function loadSourceFiles(
   return Promise.all(
     filenames.map(async (fn) => ({
       name: fn,
-      source: await promises.readFile(`src/app/${demoName}/${fn}`, { encoding: "utf8" }),
+      source: await promises.readFile(`src/app/${demoName}/${fn}`, {
+        encoding: "utf8",
+      }),
     }))
   );
 }
@@ -43,7 +47,7 @@ export default async function Demo({
   return (
     <DemoContext>
       <div className="flex">
-        <ScrollArea className="overflow-y-auto h-screen ml-2 mr-4 pr-4">
+        <ScrollArea className="overflow-y-auto h-screen ml-2 mr-4 pr-4 flex-shrink">
           <div className=" my-2 p-4 bg-zinc-900 border border-zinc-800 rounded-xl max-w-screen-sm">
             <div className="flex items-center">
               <h1 className="text-2xl font-semibold flex-1">{title}</h1>
@@ -61,7 +65,9 @@ export default async function Demo({
                 <Config />
               </div>
             )}
-            <Markdown className="prose prose-sm prose-invert prose-h2:text-xl">{readme}</Markdown>
+            <Markdown className="prose prose-sm prose-invert prose-h2:text-xl">
+              {readme}
+            </Markdown>
             <h2 className="text-xl font-bold my-4 mb-2">Source Code</h2>
             {/* <Tabs>
             <TabsList defaultValue={files[0].name}>
@@ -84,7 +90,7 @@ export default async function Demo({
             ))}
           </div>
         </ScrollArea>
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 min-w-[420px]">{children}</div>
       </div>
     </DemoContext>
   );

@@ -28,10 +28,16 @@ export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
   return async (request: NextRequest): Promise<NextResponse> => {
     const schema = options.schema || GenerateRequestSchema;
     const data = schema.parse(await request.json());
-    const response = await handler(data);
-
-    return new NextResponse(toReadableStream(response), {
-      headers: { "content-type": "text/event-stream" },
-    });
+    try {
+      const response = await handler(data);
+      return new NextResponse(toReadableStream(response), {
+        headers: { "content-type": "text/event-stream" },
+      });
+    } catch (e) {
+      return new NextResponse(
+        `data: ${JSON.stringify({ error: (e as Error).message })}\n\n`,
+        { headers: { "content-type": "text/event-stream" } }
+      );
+    }
   };
 }

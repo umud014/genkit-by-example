@@ -1,0 +1,12 @@
+{{> common}}
+
+Generate an implementation plan for your demo. It should contain the following information:
+
+- What is the thing about this demo that a developer will find interesting/exciting?
+- What should the UI for this demo look like? It should be simple, a single screen that is suited for a tall vertical container (the UI is one of three columns in the final interface).
+- Are there any configuration bits the user should be able to change to affect the demo (for example, changing the system message of a chatbot)? Not all demos need config.
+- What are the steps that need to happen in the server-side API endpoint? Does this demo need streaming data or just a normal fetch?
+
+Another agent should be able to pick up your implementation plan along with the user's prompt and documentation and know how to code up a robust, high-quality demo. You should not generate any code yourself, just plan for others to implement.
+
+Remember these are simple demos designed for instructive purposes to help developers learn specific features of Genkit. Only include things that are necessary to show the specific feature in a fun and informative manner.

@@ -1,7 +1,7 @@
 import type { GenerateResponseData, MessageData } from "genkit";
 import type { GenerateRequest } from "./schema";
 import type { GenerateResponseChunkData } from "genkit/model";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { post } from "./utils";
 
 export interface AgentHookOptions {
@@ -15,59 +15,130 @@ type ChunkData = {
   result?: GenerateResponseData;
 };
 
+type State = {
+  messages: MessageData[];
+  pendingMessages: MessageData[];
+  isLoading: boolean;
+  error: ChunkData["error"] | null;
+};
+
+type Action =
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: ChunkData["error"] | null }
+  | { type: "ADD_USER_MESSAGE"; payload: MessageData }
+  | { type: "UPDATE_PENDING_MESSAGES"; payload: MessageData[] }
+  | { type: "COMMIT_PENDING_MESSAGES" };
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "SET_LOADING":
+      return { ...state, isLoading: action.payload };
+    case "SET_ERROR":
+      return { ...state, error: action.payload };
+    case "ADD_USER_MESSAGE":
+      return { ...state, messages: [...state.messages, action.payload] };
+    case "UPDATE_PENDING_MESSAGES":
+      return { ...state, pendingMessages: action.payload };
+    case "COMMIT_PENDING_MESSAGES":
+      if (!state.isLoading && state.pendingMessages.length) {
+        return {
+          ...state,
+          messages: [...state.messages, ...state.pendingMessages],
+          pendingMessages: [],
+        };
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 export default function useAgent<T = GenerateRequest>({
   endpoint,
 }: AgentHookOptions) {
-  const [messages, setMessages] = useState<MessageData[]>([]);
-  const [pendingMessages, setPendingMessages] = useState<MessageData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<ChunkData["error"] | null>(null);
+  const [state, dispatch] = useReducer(reducer, {
+    messages: [],
+    pendingMessages: [],
+    isLoading: false,
+    error: null,
+  });
 
+  // Only commit messages when loading ends
   useEffect(() => {
-    if (!isLoading && pendingMessages.length) {
-      setMessages([...messages, ...pendingMessages]);
-      setPendingMessages([]);
+    if (!state.isLoading) {
+      dispatch({ type: "COMMIT_PENDING_MESSAGES" });
     }
-  }, [pendingMessages, isLoading]);
+  }, [state.isLoading]);
 
   const send = async (request: T, userMessage?: MessageData) => {
     userMessage =
       userMessage || (request as any).prompt
         ? { role: "user", content: (request as any).prompt }
         : undefined;
-    if (userMessage) setMessages([...messages, userMessage]);
+    if (userMessage) {
+      dispatch({ type: "ADD_USER_MESSAGE", payload: userMessage });
+    }
 
-    setIsLoading(true);
+    dispatch({ type: "SET_LOADING", payload: true });
     const stream = post<T, GenerateResponseChunkData, GenerateResponseData>(
       endpoint,
       request
     );
     const newMessages: MessageData[] = [];
     for await (const chunk of stream) {
-      console.log(chunk);
       if (chunk.message) {
         const message = chunk.message;
         console.log(message.role, message.index, message.content[0]);
-        newMessages.splice(message.index!, 1, {
-          role: message.role!,
-          content: [
-            ...(newMessages[message.index!]?.content || []),
-            ...message.content,
-          ],
+
+        // Get existing message at index
+        const existingMessage = newMessages[message.index!];
+
+        // If there's an existing message, concatenate the content
+        if (existingMessage) {
+          const lastContent =
+            existingMessage.content[existingMessage.content.length - 1];
+          const newContent = message.content[0];
+
+          if (lastContent.text && newContent.text) {
+            // Concatenate text content
+            lastContent.text += newContent.text;
+          } else {
+            // Add as new content if different type
+            existingMessage.content.push(...message.content);
+          }
+        } else {
+          // Create new message if none exists
+          newMessages.splice(message.index!, 1, {
+            role: message.role!,
+            content: [...message.content],
+          });
+        }
+
+        // Create a new array reference to trigger update
+        dispatch({
+          type: "UPDATE_PENDING_MESSAGES",
+          payload: newMessages.map((msg) => ({ ...msg })),
         });
-        setPendingMessages([...newMessages]);
       } else if (chunk.error) {
-        setError(chunk.error);
+        dispatch({ type: "SET_ERROR", payload: chunk.error });
       }
     }
-    setIsLoading(false);
+    dispatch({ type: "SET_LOADING", payload: false });
   };
 
+  console.log("messages:", JSON.stringify(state.messages));
+  console.log("pendingMessages:", JSON.stringify(state.pendingMessages));
   return {
-    isLoading,
-    error,
-    messages: [...messages, ...pendingMessages],
-    setMessages,
+    isLoading: state.isLoading,
+    error: state.error,
+    messages: [...state.messages, ...state.pendingMessages],
+    setMessages: (messages: MessageData[]) => {
+      dispatch({ type: "UPDATE_PENDING_MESSAGES", payload: [] });
+      dispatch({
+        type: "ADD_USER_MESSAGE",
+        payload: messages[messages.length - 1],
+      });
+    },
     send,
   };
 }

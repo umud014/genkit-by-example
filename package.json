@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@genkit-ai/googleai": "1.0.0-rc.7",
+    "@genkit-ai/googleai": "1.0.0-rc.10",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.5",
     "@radix-ui/react-label": "^2.1.1",
@@ -22,7 +22,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "genkit": "1.0.0-rc.7",
+    "genkit": "1.0.0-rc.10",
     "lucide-react": "^0.474.0",
     "next": "15.1.1",
     "react": "^19.0.0",
@@ -34,6 +34,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@genkit-ai/vertexai": "1.0.0-rc.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

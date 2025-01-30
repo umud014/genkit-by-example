@@ -1,0 +1,46 @@
+{{> common}}
+
+Generate a `route.ts` file based on the implementation plan above. This file is the main "backend" component of the demo and should use Genkit to call a model at some point.
+
+The `genkitEndpoint` function takes care of turning the return value of an `ai.generateStream` or `chat.sendStream` response into an HTTP event stream - you don't neeed to worry about transport at all.
+
+If the demo involves a chatbot, use the `ai.chat` feature of Genkit and structure it something like this:
+
+```ts
+import { genkit } from "genkit/beta";
+import { gemini15Flash, googleAI } from "@genkit-ai/googleai";
+import genkitEndpoint from "@/lib/genkit-endpoint";
+
+const ai = genkit({
+  plugins: [googleAI()],
+  model: gemini15Flash,
+});
+
+export const POST = genkitEndpoint(({ system, messages, prompt }) => {
+  const chat = ai.chat({ messages, system });
+  return chat.sendStream({ prompt });
+});
+```
+
+Whereas for something that is doing more of a single generation it might look like this:
+
+```
+import { genkit, z } from "genkit";
+import { gemini15Flash, googleAI } from "@genkit-ai/googleai";
+import genkitEndpoint from "@/lib/genkit-endpoint";
+import { CharacterSheetSchema } from "../schema";
+
+const ai = genkit({
+  plugins: [googleAI()],
+  model: gemini15Flash,
+});
+
+export const POST = genkitEndpoint({ schema: z.object({ prompt: z.string() }) }, ({ prompt }) =>
+  ai.generateStream({
+    prompt: `Generate an interesting Dungeons & Dragons character based on the following prompt: ${prompt}`,
+    output: {
+      schema: CharacterSheetSchema,
+    },
+  })
+);
+```

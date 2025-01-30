@@ -1,0 +1,23 @@
+{{> common}}
+
+You are generating the Next.js App Router `page.tsx` for this demo. It should look something like this:
+
+```tsx
+import Demo from "@/components/demo";
+import MyDemoConfig from "./config";
+import MyDemoApp from "./app";
+
+export default async function Page() {
+  return (
+    <Demo
+      name="chatbot-simple"
+      title="Simple Chatbot"
+      Config={MyDemoConfig}
+    >
+      <MyDemoApp/>
+    </Demo>
+  );
+}
+```
+
+Change the imports and names as appropriate based on the demo that has already been generated.

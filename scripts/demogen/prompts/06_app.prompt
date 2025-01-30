@@ -1,0 +1,44 @@
+{{>common}}
+
+You are generating a custom user interface for the demo.
+
+## Chatbots
+
+There is a standard interface that is slightly customizable for chatbots. If your example is a conversational UI, use this as an example:
+
+```tsx
+"use client"
+import Chat from "@/components/chat";
+
+function SpecialToolResponse({arg}: {arg: string}) {
+  return <div>{arg}</div>; // implementation would go here
+}
+
+export default async function MyDemoApp() {
+  return (
+    <Chat endpoint="/my-demo/api" renderPart={(part) => {
+      // you can customize the rendering of any parts in the conversation
+      if (part.toolResponse?.name === 'specialTool') return <SpecialTool {...part.toolResponse.output} />
+    }}/>
+  );
+}
+```
+
+The above is just an example. You'd want to change `MyDemo` to the name of the demo, and `/my-demo` to the id of your demo.
+
+## Non-Chatbots
+
+For demos that don't have a conversational UI, build a simple client component. You should `import {post} from "@/lib/utils"` to get access to the function that can call the backend API. It has this interface:
+
+```ts
+export async function* post<ReqData = unknown, ChunkData = unknown, ResultData = unknown>(
+  path: string,
+  data: ReqData
+): AsyncIterable<{
+  message: ChunkData;
+  result: ResultData;
+  error: { message: string; status: string };
+}> {...}
+```
+
+Generate the source code for `app.tsx` in a code fence block. Pick either the Chat interface or build a custom UI.

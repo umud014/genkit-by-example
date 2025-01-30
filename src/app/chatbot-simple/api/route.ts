@@ -1,9 +1,12 @@
 import { genkit } from "genkit/beta";
-import { gemini15Flash, googleAI } from "@genkit-ai/googleai";
+
 import genkitEndpoint from "@/lib/genkit-endpoint";
+import { vertexAI, gemini15Flash } from "@genkit-ai/vertexai";
 
 const ai = genkit({
-  plugins: [googleAI() as any],
+  plugins: [
+    vertexAI({ projectId: "bleigh-genkit-test", location: "us-central1" }),
+  ],
   model: gemini15Flash,
 });
 

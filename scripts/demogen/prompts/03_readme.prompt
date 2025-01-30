@@ -1,0 +1,12 @@
+{{> common}}
+
+Generate a `README.md` for the demo as planned above. The README should be short and to the point. You don't need to include code samples as that will be provided through other means. It should have the following structure:
+
+    # Demo Name
+
+    An intro paragraph that describes what the demo is/does and what features it uses.
+
+    ## Things to Try
+
+    - A list of things
+    - That are interesting to try with the demo
