@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { GenerateRequestSchema } from "./schema";
 import { toReadableStream } from "./utils";
 import { adminAuth, adminRtdb } from "./firebase-admin";
+import { enableFirebaseTelemetry } from "@genkit-ai/firebase";
+
+enableFirebaseTelemetry();
 
 export type ChatHandler<T = z.infer<typeof GenerateRequestSchema>> = (
   data: T
@@ -61,7 +64,6 @@ export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
     }
     const { uid } = await adminAuth.verifyIdToken(idToken);
     const numRequests = await checkRateLimit(uid);
-    console.log("UID:", uid, numRequests);
     if (numRequests > MAX_REQUESTS_HOURLY) {
       return errorResponse({
         status: 429,

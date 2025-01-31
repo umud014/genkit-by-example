@@ -124,7 +124,7 @@ export default function Chat({
           </div>
         )}
         {error && (
-          <div className="rounded-lg py-2 px-3 mx-12 my-4 border border-red-300 text-red-100 text-white">
+          <div className="rounded-lg py-2 px-3 mx-12 my-4 border border-red-300 text-red-100">
             {error.message}
           </div>
         )}

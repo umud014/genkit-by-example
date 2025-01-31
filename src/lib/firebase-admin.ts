@@ -5,6 +5,7 @@ import { getAuth } from "firebase-admin/auth";
 let admin = getApps().length
   ? getApp()
   : initializeApp({
+      projectId: "genkit-by-example",
       databaseURL: "https://genkit-by-example-default-rtdb.firebaseio.com/",
     });
 
