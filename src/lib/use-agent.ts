@@ -120,7 +120,13 @@ export default function useAgent<T = GenerateRequest>({
           payload: newMessages.map((msg) => ({ ...msg })),
         });
       } else if (chunk.error) {
-        dispatch({ type: "SET_ERROR", payload: chunk.error });
+        dispatch({
+          type: "SET_ERROR",
+          payload: {
+            message: chunk.error.message,
+            status: chunk.error.status?.toString() || "",
+          },
+        });
       }
     }
     dispatch({ type: "SET_LOADING", payload: false });
