@@ -3,9 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { GenerateRequestSchema } from "./schema";
 import { toReadableStream } from "./utils";
 import { adminAuth, adminRtdb } from "./firebase-admin";
-import { enableFirebaseTelemetry } from "@genkit-ai/firebase";
 
-enableFirebaseTelemetry();
+if (process.env.NODE_ENV === "production") {
+  import("@genkit-ai/firebase").then(({ enableFirebaseTelemetry }) => {
+    enableFirebaseTelemetry();
+  });
+}
 
 export type ChatHandler<T = z.infer<typeof GenerateRequestSchema>> = (
   data: T

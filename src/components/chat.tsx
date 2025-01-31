@@ -117,9 +117,9 @@ export default function Chat({
           </div>
         ))}
         {isLoading && ( //Display loading indicator
-          <div className="flex justify-start my-2 ml-16">
+          <div className="flex justify-start my-2">
             <div className="animate-pulse text-sm">
-              The agent is thinking&hellip;
+              <Sparkle className="w-3 h-3" /> Thinking&hellip;
             </div>
           </div>
         )}
