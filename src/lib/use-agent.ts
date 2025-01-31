@@ -1,4 +1,4 @@
-import type { GenerateResponseData, MessageData } from "genkit";
+import type { GenerateResponseData, MessageData, Part } from "genkit";
 import type { GenerateRequest } from "./schema";
 import type { GenerateResponseChunkData } from "genkit/model";
 import { useEffect, useReducer } from "react";
@@ -28,6 +28,20 @@ type Action =
   | { type: "ADD_USER_MESSAGE"; payload: MessageData }
   | { type: "UPDATE_PENDING_MESSAGES"; payload: MessageData[] }
   | { type: "COMMIT_PENDING_MESSAGES" };
+
+function condenseTextParts(message: MessageData) {
+  return {
+    ...message,
+    content: message.content.reduce((out, part) => {
+      if (out.at(-1)?.text && part.text) {
+        out.at(-1)!.text += part.text;
+      } else {
+        out.push(part);
+      }
+      return out;
+    }, [] as Part[]),
+  };
+}
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -88,7 +102,6 @@ export default function useAgent<T = GenerateRequest>({
     for await (const chunk of stream) {
       if (chunk.message) {
         const message = chunk.message;
-        console.log(message.role, message.index, message.content[0]);
 
         // Get existing message at index
         const existingMessage = newMessages[message.index!];
@@ -132,12 +145,12 @@ export default function useAgent<T = GenerateRequest>({
     dispatch({ type: "SET_LOADING", payload: false });
   };
 
-  console.log("messages:", JSON.stringify(state.messages));
-  console.log("pendingMessages:", JSON.stringify(state.pendingMessages));
   return {
     isLoading: state.isLoading,
     error: state.error,
-    messages: [...state.messages, ...state.pendingMessages],
+    messages: [...state.messages, ...state.pendingMessages].map(
+      condenseTextParts
+    ),
     setMessages: (messages: MessageData[]) => {
       dispatch({ type: "UPDATE_PENDING_MESSAGES", payload: [] });
       dispatch({

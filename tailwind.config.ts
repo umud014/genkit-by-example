@@ -15,9 +15,14 @@ export default {
           "25%": { transform: "rotate(-5deg)" },
           "75%": { transform: "rotate(5deg)" },
         },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
         shake: "shake 0.5s ease-in-out infinite",
+        "fade-in": "fade-in 0.5s ease-out forwards",
       },
       typography: {
         DEFAULT: {

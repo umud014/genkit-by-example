@@ -15,7 +15,6 @@ export default function WithFirebase({
 }) {
   const pathname = usePathname();
   useEffect(() => {
-    console.log("screen_view");
     logEvent("screen_view", { firebase_screen: pathname });
   }, [pathname]);
   return (

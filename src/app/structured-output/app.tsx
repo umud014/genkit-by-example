@@ -35,7 +35,6 @@ export default function StructuredOutputApp() {
       prompt,
     });
     for await (const chunk of stream) {
-      console.log(chunk.message);
       if (chunk.message) setCharacter(chunk.message.output);
     }
     setIsLoading(false);
