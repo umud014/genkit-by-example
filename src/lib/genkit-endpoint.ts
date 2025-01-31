@@ -2,6 +2,7 @@ import { GenerateStreamResponse, z } from "genkit";
 import { NextRequest, NextResponse } from "next/server";
 import { GenerateRequestSchema } from "./schema";
 import { toReadableStream } from "./utils";
+import { adminAuth, adminRtdb } from "./firebase-admin";
 
 export type ChatHandler<T = z.infer<typeof GenerateRequestSchema>> = (
   data: T
@@ -12,6 +13,28 @@ export interface ChatEndpointOptions<T extends z.ZodTypeAny = z.ZodTypeAny> {
 }
 
 type Endpoint = (request: NextRequest) => Promise<NextResponse>;
+
+function errorResponse(error: { message: string; status: number }) {
+  return new NextResponse(JSON.stringify(error), {
+    status: error.status,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+async function checkRateLimit(uid: string): Promise<number> {
+  const hourBucket = new Date().toISOString().substring(0, 13);
+  let newValue: number = 0;
+  const { committed, snapshot } = await adminRtdb
+    .ref(`limits/${hourBucket}/${uid}`)
+    .transaction((count) => {
+      newValue = (count || 0) + 1;
+      return newValue;
+    });
+  if (!committed) return 10000000;
+  return snapshot.val();
+}
+
+const MAX_REQUESTS_PER_HOUR = 10;
 
 export default function genkitEndpoint(handler: ChatHandler): Endpoint;
 export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
@@ -26,8 +49,27 @@ export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
   handler = handler || (optionsOrHandler as ChatHandler);
 
   return async (request: NextRequest): Promise<NextResponse> => {
+    const idToken = request.headers.get("authorization")?.split(" ")[1];
+    if (!idToken) {
+      return errorResponse({
+        message: "You must be authenticated to make requests to demos.",
+        status: 403,
+      });
+    }
+    const { uid } = await adminAuth.verifyIdToken(idToken);
+    const numRequests = await checkRateLimit(uid);
+    console.log("UID:", uid, numRequests);
+    if (numRequests > MAX_REQUESTS_PER_HOUR) {
+      return errorResponse({
+        status: 429,
+        message:
+          "You have reached your demo request limit for the hour. Come back later.",
+      });
+    }
+
     const schema = options.schema || GenerateRequestSchema;
     const data = schema.parse(await request.json());
+
     try {
       const response = await handler(data);
       return new NextResponse(toReadableStream(response), {
@@ -35,8 +77,12 @@ export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
       });
     } catch (e) {
       return new NextResponse(
-        `data: ${JSON.stringify({ error: (e as Error).message })}\n\n`,
-        { headers: { "content-type": "text/event-stream" } }
+        `data: ${JSON.stringify({
+          error: { message: (e as Error).message },
+        })}\n\n`,
+        {
+          headers: { "content-type": "text/event-stream" },
+        }
       );
     }
   };

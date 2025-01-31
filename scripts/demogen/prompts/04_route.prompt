@@ -44,3 +44,12 @@ export const POST = genkitEndpoint({ schema: z.object({ prompt: z.string() }) },
   })
 );
 ```
+
+If you need to use Dotprompt templates in your sample, you need to initialize Genkit like this:
+
+```ts
+const ai = genkit({
+  // ... plugin config and model ...
+  promptDir: 'src/app/{{demo.metadata.id}}/prompts',
+});
+```

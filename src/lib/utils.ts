@@ -2,6 +2,8 @@ import { clsx, type ClassValue } from "clsx";
 import type { GenerateStreamResponse, MessageData, Part } from "genkit";
 import { GenerateResponseChunkData } from "genkit/model";
 import { twMerge } from "tailwind-merge";
+import { auth, logEvent } from "./firebase";
+import { getIdToken } from "firebase/auth";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -9,15 +11,28 @@ export function cn(...inputs: ClassValue[]) {
 
 export function toReadableStream(
   response: GenerateStreamResponse,
-  transform?: (chunk: GenerateResponseChunkData & { output: unknown }) => any
+  options?: {
+    transform?: (chunk: GenerateResponseChunkData & { output: unknown }) => any;
+    errorRef?: { current?: { message: string } };
+  }
 ) {
   return new ReadableStream({
     async pull(controller) {
-      for await (const chunk of response.stream) {
+      try {
+        for await (const chunk of response.stream) {
+          controller.enqueue(
+            `data: ${JSON.stringify({
+              message: options?.transform
+                ? options.transform(chunk)
+                : { ...chunk.toJSON(), output: chunk.output },
+            })}\n\n`
+          );
+        }
+      } catch (e) {
         controller.enqueue(
           `data: ${JSON.stringify({
-            message: transform ? transform(chunk) : { ...chunk.toJSON(), output: chunk.output },
-          })}\n\n`
+            error: { message: (e as Error).message },
+          })}`
         );
       }
       controller.enqueue(`data: {"result": null}`);
@@ -26,24 +41,51 @@ export function toReadableStream(
   });
 }
 
-export async function* post<ReqData = unknown, ChunkData = unknown, ResultData = unknown>(
+export async function* post<
+  ReqData = unknown,
+  ChunkData = unknown,
+  ResultData = unknown
+>(
   path: string,
   data: ReqData
 ): AsyncIterable<{
-  message: ChunkData;
-  result: ResultData;
-  error: { message: string; status: string };
+  message?: ChunkData;
+  result?: ResultData;
+  error?: { message: string; status?: number };
 }> {
+  let token: string | undefined;
+  if (auth.currentUser) {
+    token = await getIdToken(auth.currentUser!);
+  }
+  if (!token) throw new Error("Must be authenticated to make API calls.");
+
+  logEvent("demo_api_call", { path });
   const response = await fetch(path, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to POST to ${path}: ${response.status} ${response.statusText}`);
+    if (response.headers.get("content-type") === "application/json") {
+      const error = await response.json();
+      console.log("RECEIVED ERROR", error);
+      yield { error };
+      return;
+    }
+    yield {
+      error: {
+        message: `Unexpected HTTP error: ${(await response.text()).substring(
+          0,
+          200
+        )}`,
+        status: response.status,
+      },
+    };
+    return;
   }
 
   const reader = response.body?.getReader();

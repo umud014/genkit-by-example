@@ -6,7 +6,7 @@ output:
     id: string, a kebab-case id for the demo (e.g. "chatbot-simple" or "structured-output")
     name: string, a short human-readable name (e.g. "Simple Chatbot" or "Structured Output")
     description: string, a brief description of what the demo is and what Genkit features it uses
-    tags(array, kebab-case list of features e.g. 'structured-output', 'chat', 'rag', etc): string
+    tags(array, kebab-case list of features e.g. 'structured-output', 'chat', 'rag', 'dotprompt', etc): string
     complexity: number, how complex the demo is on a scale of 1-5
 ---
 

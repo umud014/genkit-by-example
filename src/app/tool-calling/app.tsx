@@ -25,7 +25,7 @@ function WeatherResponse({
   }
 
   return (
-    <div className="border-2 border-zinc-700 p-4 pb-3 rounded-xl">
+    <div className=" mb-4 border-2 border-zinc-700 p-4 pb-3 rounded-xl">
       <div className="flex items-center gap-2">
         <span className="text-xl">{temperature}°F</span>
         <span className="text-xl">{icon}</span>
@@ -51,7 +51,12 @@ function DiceResponse({ output }: { output: number }) {
     return () => rolls.forEach(clearTimeout);
   }, [output]);
 
-  return <Dice value={number} className={rolling ? "animate-shake" : ""} />;
+  return (
+    <Dice
+      value={number}
+      className={"mb-4" + (rolling ? "animate-shake" : "")}
+    />
+  );
 }
 
 export default function ToolCallingChatbotApp() {

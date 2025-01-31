@@ -21,7 +21,7 @@ function TextPart({ role, text }: { role: Role; text: string }) {
   return (
     <div
       className={cn(
-        "rounded-lg px-4 py-2 max-w-[85%]", // Allow messages to take up more width
+        "rounded-lg px-4 py-2 max-w-[85%] mb-4", // Allow messages to take up more width
         role === "user"
           ? "bg-zinc-800 border-2 border-zinc-600 text-white ml-auto rounded-tr-none" // User message style, right-aligned
           : "bg-black border-2 border-zinc-700 text-white rounded-tl-none" // Assistant message style, left-aligned
@@ -40,8 +40,8 @@ export default function Chat({
   renderPart?: PartRender;
 }) {
   const renderPart: PartRender = (message, part, index) => {
-    const Custom = customRenderPart?.(message, part, index) || null;
-    if (Custom !== null) return Custom;
+    const custom = customRenderPart?.(message, part, index) || null;
+    if (custom !== null) return custom;
     if (part.text) return <TextPart role={message.role} text={part.text} />;
   };
 
@@ -100,18 +100,20 @@ export default function Chat({
 
   return (
     <div className="flex flex-col h-screen max-w-screen-sm mx-auto relative">
-      <ScrollArea className="flex-1 p-4 overflow-y-auto">
+      <ScrollArea className="flex-1 p-4 pt-6 overflow-y-auto">
         {rawMessages.map((message, index) => (
           <div
             key={`${message.role}-${index}`}
             className={cn(
-              "flex w-full my-4 items-start", // Align items to the start
+              "flex", // Align items to the start
               message.role === "user" ? "justify-end" : "justify-start"
             )}
           >
-            <div key={`${message.role}-${index}-content`}>
-              {message.content.map((p, i) => renderPart(message, p, i))}
-            </div>
+            {message.content.map((p, i) => (
+              <React.Fragment key={i}>
+                {renderPart(message, p, i)}
+              </React.Fragment>
+            ))}
           </div>
         ))}
         {isLoading && ( //Display loading indicator
@@ -122,7 +124,7 @@ export default function Chat({
           </div>
         )}
         {error && (
-          <div className="rounded-lg py-2 px-3 mx-12 my-4 bg-red-600 text-white">
+          <div className="rounded-lg py-2 px-3 mx-12 my-4 border border-red-300 text-red-100 text-white">
             {error.message}
           </div>
         )}

@@ -6,6 +6,7 @@ Generate an implementation plan for your demo. It should contain the following i
 - What should the UI for this demo look like? It should be simple, a single screen that is suited for a tall vertical container (the UI is one of three columns in the final interface).
 - Are there any configuration bits the user should be able to change to affect the demo (for example, changing the system message of a chatbot)? Not all demos need config.
 - What are the steps that need to happen in the server-side API endpoint? Does this demo need streaming data or just a normal fetch?
+- If this demo leverages dotprompt, describe the filename (`camelCase.prompt`) and what the prompt should do. 
 
 Another agent should be able to pick up your implementation plan along with the user's prompt and documentation and know how to code up a robust, high-quality demo. You should not generate any code yourself, just plan for others to implement.
 
