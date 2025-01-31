@@ -34,7 +34,10 @@ async function checkRateLimit(uid: string): Promise<number> {
   return snapshot.val();
 }
 
-const MAX_REQUESTS_PER_HOUR = 10;
+const MAX_REQUESTS_HOURLY = parseInt(
+  process.env.MAX_REQUESTS_HOURLY || "120",
+  10
+);
 
 export default function genkitEndpoint(handler: ChatHandler): Endpoint;
 export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
@@ -59,7 +62,7 @@ export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
     const { uid } = await adminAuth.verifyIdToken(idToken);
     const numRequests = await checkRateLimit(uid);
     console.log("UID:", uid, numRequests);
-    if (numRequests > MAX_REQUESTS_PER_HOUR) {
+    if (numRequests > MAX_REQUESTS_HOURLY) {
       return errorResponse({
         status: 429,
         message:
