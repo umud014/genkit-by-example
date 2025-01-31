@@ -72,7 +72,6 @@ export async function* post<
   if (!response.ok) {
     if (response.headers.get("content-type") === "application/json") {
       const error = await response.json();
-      console.log("RECEIVED ERROR", error);
       yield { error };
       return;
     }
@@ -129,7 +128,6 @@ export function applyChunk(
       role: chunk.role!,
       content: [...existingParts, ...chunk.content],
     });
-    console.log("IN SETTER RETURNING", out);
     return out;
   });
 }
