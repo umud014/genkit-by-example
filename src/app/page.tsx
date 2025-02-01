@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { demos } from "@/data";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="my-4 max-w-screen-md mx-auto">
-      <h1 className="text-4xl text-center mt-6 mb-4 font-semibold flex justify-center">
+    <div className="my-4 max-w-screen-md mx-auto p-4">
+      <h1 className="text-4xl text-center sm:mt-6 mb-4 font-semibold flex justify-center">
         <Image
           src="/banner.png"
           alt="Firebase Genkit"
@@ -38,8 +38,8 @@ export default function Home() {
         />
       </h1>
       <p>
-        This repository contains a set of pre-built examples of using Firebase
-        Genkit to build a variety of AI-powered features for Next.js
+        <b>Genkit by Example</b> is a collection of pre-built examples of using
+        Firebase Genkit to build a variety of AI-powered features for Next.js
         applications.
       </p>
       <p className="mt-4">
@@ -47,28 +47,19 @@ export default function Home() {
         includes source code references and a working demo. Choose an example
         from the menu on the left or click a link below to get started:
       </p>
-      <Card className="p-4 mt-6">
-        <table>
-          <tbody>
-            {demos.map((d) => (
-              <tr
-                className="border-b border-zinc-800 last:border-none"
-                key={d.id}
-              >
-                <th scope="col" className="text-nowrap text-lg p-2">
-                  <Link
-                    href={`/${d.id}`}
-                    className="block p-4 hover:bg-orange-500/10 text-orange-200 rounded-lg"
-                  >
-                    {d.name}
-                  </Link>
-                </th>
-                <td className="text-sm p-2">{d.description}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+      <div className="p-4 mt-6 grid grid-cols-2 max-sm:grid-cols-1">
+        {demos.map((d) => (
+          <Card className="p-2 sm:mx-2 my-4" key={d.id}>
+            <Link
+              href={`/${d.id}`}
+              className="block p-2 hover:bg-orange-500/10 text-orange-200 rounded-lg"
+            >
+              <h4 className="text-nowrap">{d.name}</h4>
+            </Link>
+            <p className="text-sm p-2">{d.description}</p>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

@@ -48,7 +48,7 @@ export const demos: DemoMetadata[] = [
     id: "tool-calling",
     name: "Tool Calling",
     description:
-      "A simple example of a tool-calling chatbot that uses a getWeather tool with fake data and a rollDice tool that renders a red die with pips. This demo uses tool calling.",
+      "A chatbot with 'getWeather' and 'rollDice' tools and custom tool response rendering.",
     tags: ["tools", "chat"],
     complexity: 2,
   },

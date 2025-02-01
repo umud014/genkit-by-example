@@ -35,9 +35,14 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { demos } from "@/data";
-import { BookText, Github, Newspaper } from "lucide-react";
+import { BookText, Github, Lightbulb, Newspaper } from "lucide-react";
 
 const genkitLinks = [
+  {
+    url: "https://github.com/mbleigh/genkit-by-example/issues/new?template=suggest-idea-for-example.md",
+    label: "Suggest an Idea",
+    icon: Lightbulb,
+  },
   {
     url: "https://firebase.google.com/docs/genkit",
     label: "Documentation",
