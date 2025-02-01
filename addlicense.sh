@@ -12,12 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-env:
-  - variable: GOOGLE_GENAI_API_KEY
-    secret: GOOGLE_GENAI_API_KEY
-  - variable: GCLOUD_PROJECT
-    value: genkit-by-example
-  - variable: GCLOUD_LOCATION
-    value: us-central1
-  - variable: MAX_REQUESTS_HOURLY
-    value: "120"
+addlicense -c "Google LLC" -l apache -ignore '**/node_modules/**' -ignore 'third_party/**' -ignore '**/pnpm-lock.yaml' .

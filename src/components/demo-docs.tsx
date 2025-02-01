@@ -1,7 +1,28 @@
+/**
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Button } from "./ui/button";
 import { Github } from "lucide-react";
 import Markdown from "react-markdown";
 import CodeBlock from "./code-block";
+
+function stripLicense(source: string) {
+  if (!source.includes("Licensed under the Apache License")) return source;
+  return source.substring(source.indexOf("*/") + 2).trim();
+}
 
 export default function DemoDocs({
   id,
@@ -52,7 +73,7 @@ export default function DemoDocs({
       <h2 className="text-xl font-bold my-4 mb-2">Source Code</h2>
       {files.map((f) => (
         <div key={f.name} className="mb-4">
-          <CodeBlock source={`// ${f.name}\n\n${f.source}`} />
+          <CodeBlock source={`// ${f.name}\n\n${stripLicense(f.source)}`} />
         </div>
       ))}
     </div>
