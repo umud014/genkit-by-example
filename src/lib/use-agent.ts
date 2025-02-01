@@ -27,7 +27,8 @@ type Action =
   | { type: "SET_ERROR"; payload: ChunkData["error"] | null }
   | { type: "ADD_USER_MESSAGE"; payload: MessageData }
   | { type: "UPDATE_PENDING_MESSAGES"; payload: MessageData[] }
-  | { type: "COMMIT_PENDING_MESSAGES" };
+  | { type: "COMMIT_PENDING_MESSAGES" }
+  | { type: "RESET_CONVERSATION" };
 
 function condenseTextParts(message: MessageData) {
   return {
@@ -62,6 +63,14 @@ function reducer(state: State, action: Action): State {
         };
       }
       return state;
+    case "RESET_CONVERSATION":
+      return {
+        ...state,
+        messages: [],
+        pendingMessages: [],
+        isLoading: false,
+        error: undefined,
+      };
     default:
       return state;
   }
@@ -151,13 +160,7 @@ export default function useAgent<T = GenerateRequest>({
     messages: [...state.messages, ...state.pendingMessages].map(
       condenseTextParts
     ),
-    setMessages: (messages: MessageData[]) => {
-      dispatch({ type: "UPDATE_PENDING_MESSAGES", payload: [] });
-      dispatch({
-        type: "ADD_USER_MESSAGE",
-        payload: messages[messages.length - 1],
-      });
-    },
+    resetConversation: () => dispatch({ type: "RESET_CONVERSATION" }),
     send,
   };
 }

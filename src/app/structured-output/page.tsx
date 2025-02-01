@@ -1,13 +1,12 @@
 import Demo from "@/components/demo";
 import StructuredOutputApp from "./app";
+import { demoMetadata } from "@/lib/demo-metadata";
+
+export const generateMetadata = demoMetadata("structured-output");
 
 export default async function Page() {
   return (
-    <Demo
-      name="structured-output"
-      title="Structured Output"
-      sourceFiles={["api/route.ts", "schema.ts"]}
-    >
+    <Demo id="structured-output" sourceFiles={["api/route.ts", "schema.ts"]}>
       <StructuredOutputApp />
     </Demo>
   );

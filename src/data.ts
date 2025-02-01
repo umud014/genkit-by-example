@@ -1,4 +1,15 @@
-export const demos = [
+import { notFound } from "next/navigation";
+
+export interface DemoMetadata {
+  id: string;
+  name: string;
+  description: string;
+  tags?: string[];
+  added?: string;
+  complexity?: number;
+}
+
+export const demos: DemoMetadata[] = [
   {
     id: "chatbot-simple",
     name: "Simple Chatbot",
@@ -26,3 +37,13 @@ export const demos = [
     complexity: 2,
   },
 ];
+
+export function findDemo(id: string): DemoMetadata | undefined {
+  return demos.find((d) => d.id === id);
+}
+
+export function mustFindDemo(id: string): DemoMetadata {
+  const demo = findDemo(id);
+  if (!demo) notFound();
+  return demo;
+}

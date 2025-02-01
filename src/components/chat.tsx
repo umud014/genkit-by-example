@@ -48,7 +48,7 @@ export default function Chat({
   const { config } = useContext(DemoConfig);
   const {
     messages: rawMessages,
-    setMessages,
+    resetConversation,
     error,
     isLoading,
     send,
@@ -99,7 +99,7 @@ export default function Chat({
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-screen-sm mx-auto relative">
+    <div className="flex flex-col h-full max-w-screen-sm mx-auto relative">
       <ScrollArea className="flex-1 p-4 pt-6 overflow-y-auto">
         {rawMessages.map((message, index) => (
           <div
@@ -118,8 +118,8 @@ export default function Chat({
         ))}
         {isLoading && ( //Display loading indicator
           <div className="flex justify-start my-2">
-            <div className="animate-pulse text-sm">
-              <Sparkle className="w-3 h-3" /> Thinking&hellip;
+            <div className="flex items-center animate-pulse text-sm">
+              <Sparkle className="w-3 h-3 mr-1" /> Thinking&hellip;
             </div>
           </div>
         )}
@@ -162,7 +162,7 @@ export default function Chat({
           className="absolute top-4 left-2"
           title="Reset Conversation"
           onClick={() => {
-            setMessages([]);
+            resetConversation();
             inputRef.current?.focus();
           }}
         >

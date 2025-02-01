@@ -12,7 +12,10 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Genkit by Example",
+  title: {
+    template: "%s | Genkit by Example",
+    default: "Genkit by Example",
+  },
   description:
     "Common patterns for apps incorporating GenAI, powered by Firebase Genkit.",
 };
@@ -21,7 +24,7 @@ function App({ children }: { children: React.ReactNode }) {
   return (
     <WithFirebase>
       <AppSidebar />
-      <div className="flex-1 mr-2">{children}</div>
+      <div className="flex-1">{children}</div>
     </WithFirebase>
   );
 }

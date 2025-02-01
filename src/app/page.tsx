@@ -1,7 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { demos } from "@/data";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Add GenAI to your web/mobile app",
+  description:
+    "Pre-built examples of using Firebase Genkit to build a variety of AI-powered features for Next.js applications.",
+};
 
 export default function Home() {
   return (
