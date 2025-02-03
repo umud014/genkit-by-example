@@ -23,6 +23,7 @@ export interface DemoMetadata {
   tags?: string[];
   added?: string;
   complexity?: number;
+  files: (string | { name: string; combine: string[] })[];
 }
 
 export const demos: DemoMetadata[] = [
@@ -34,6 +35,12 @@ export const demos: DemoMetadata[] = [
     tags: ["chat"],
     added: "2025-01-27",
     complexity: 1,
+    files: [
+      {
+        name: "api/route.ts",
+        combine: ["@/common/genkit-beta.ts", "api/route.ts"],
+      },
+    ],
   },
   {
     id: "structured-output",
@@ -43,6 +50,13 @@ export const demos: DemoMetadata[] = [
     tags: ["structured-output"],
     added: "2025-01-28",
     complexity: 1,
+    files: [
+      {
+        name: "api/route.ts",
+        combine: ["@/common/genkit.ts", "api/route.ts"],
+      },
+      "schema.ts",
+    ],
   },
   {
     id: "tool-calling",
@@ -51,6 +65,12 @@ export const demos: DemoMetadata[] = [
       "A chatbot with 'getWeather' and 'rollDice' tools and custom tool response rendering.",
     tags: ["tools", "chat"],
     complexity: 2,
+    files: [
+      {
+        name: "api/route.ts",
+        combine: ["@/common/genkit-beta.ts", "api/route.ts"],
+      },
+    ],
   },
 ];
 

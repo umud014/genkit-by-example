@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
+import { ai, z } from "@/common/genkit-beta";
+
+// !!!START
+
 import genkitEndpoint from "@/lib/genkit-endpoint";
-
-// import from "genkit/beta" to use the chat api
-import { z } from "genkit";
-import { genkit } from "genkit/beta";
-
-import { vertexAI, gemini } from "@genkit-ai/vertexai";
-// import { googleAI, gemini } form "@genkit-ai/googleai"
-
-const ai = genkit({
-  plugins: [
-    vertexAI(), // set GCLOUD_PROJECT and GCLOUD_LOCATION env variables
-    // googleAI(), // set GOOGLE_API_KEY env variable
-  ],
-  model: gemini("gemini-1.5-flash"),
-});
 
 const getWeather = ai.defineTool(
   {

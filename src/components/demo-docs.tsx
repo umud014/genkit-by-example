@@ -44,7 +44,7 @@ export default function DemoDocs({
       className={`${
         isMobile
           ? "py-6 overflow-y-auto"
-          : "my-6 p-4 bg-zinc-900 border border-zinc-800 rounded-xl"
+          : "my-6 p-4 bg-zinc-900 border border-zinc-800 rounded-xl max-w-screen-md"
       }`}
     >
       <div

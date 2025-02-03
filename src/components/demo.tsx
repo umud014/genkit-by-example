@@ -25,34 +25,66 @@ async function loadReadme(demoName: string): Promise<string> {
   return file.split("\n").slice(2).join("\n").trim();
 }
 
+const START_MARKER = "\n// !!!START\n";
+const END_MARKER = "\n// !!!END\n";
+
+function trimSource(source: string) {
+  const startIndex = source.indexOf(START_MARKER);
+  const endIndex = source.indexOf(END_MARKER);
+  if (startIndex >= 0)
+    source = source.substring(startIndex + START_MARKER.length);
+  if (endIndex >= 0) source = source.substring(0, endIndex);
+  return source.trim();
+}
+
+async function loadSourceFile(
+  demoId: string,
+  nameOrCombine: string | { name: string; combine: string[] }
+): Promise<{ name: string; source: string }> {
+  if (typeof nameOrCombine === "string") {
+    const name = nameOrCombine;
+    return {
+      name: nameOrCombine,
+      source: await promises.readFile(
+        name.startsWith("@/")
+          ? `src${name.substring(1)}`
+          : `src/app/${demoId}/${name}`,
+        {
+          encoding: "utf8",
+        }
+      )!,
+    };
+  }
+
+  const source = (
+    await Promise.all(
+      nameOrCombine.combine.map((fn) => loadSourceFile(demoId, fn))
+    )
+  )
+    .map((f) => trimSource(f.source))
+    .join("\n\n");
+  return { name: nameOrCombine.name, source };
+}
+
 async function loadSourceFiles(
-  demoName: string,
-  filenames: string[]
+  demoId: string,
+  filenames: (string | { name: string; combine: string[] })[]
 ): Promise<{ name: string; source: string }[]> {
-  return Promise.all(
-    filenames.map(async (fn) => ({
-      name: fn,
-      source: await promises.readFile(`src/app/${demoName}/${fn}`, {
-        encoding: "utf8",
-      }),
-    }))
-  );
+  return Promise.all(filenames.map((fn) => loadSourceFile(demoId, fn)));
 }
 
 export default async function Demo({
   id,
   Config,
   children,
-  sourceFiles,
 }: {
   id: string;
   Config?: React.ComponentType;
   children: React.ReactNode;
-  sourceFiles?: string[];
 }) {
-  const { name } = mustFindDemo(id);
+  const { name, files: fileArgs } = mustFindDemo(id);
   const readme = await loadReadme(id);
-  const files = await loadSourceFiles(id, sourceFiles || ["api/route.ts"]);
+  const files = await loadSourceFiles(id, fileArgs);
 
   return (
     <DemoContent

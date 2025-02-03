@@ -20,6 +20,7 @@ import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import WithFirebase from "./firebase";
+import CookieNotice from "./cookie-notice";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",
@@ -54,7 +55,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${nunitoSans.className} antialiased dark`}>
         <SidebarProvider>
-          <App>{children}</App>
+          <CookieNotice>
+            <App>{children}</App>
+          </CookieNotice>
         </SidebarProvider>
       </body>
     </html>

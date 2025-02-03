@@ -49,15 +49,14 @@ export default function Home() {
       </p>
       <div className="p-4 mt-6 grid grid-cols-2 max-sm:grid-cols-1">
         {demos.map((d) => (
-          <Card className="p-2 sm:mx-2 my-4" key={d.id}>
-            <Link
-              href={`/${d.id}`}
-              className="block p-2 hover:bg-orange-500/10 text-orange-200 rounded-lg"
-            >
-              <h4 className="text-nowrap">{d.name}</h4>
-            </Link>
-            <p className="text-sm p-2">{d.description}</p>
-          </Card>
+          <Link href={`/${d.id}`} key={d.id}>
+            <Card className="p-2 sm:mx-2 my-4 hover:bg-orange-500/10">
+              <h4 className="text-nowrap block p-2 text-orange-200 rounded-lg">
+                {d.name}
+              </h4>
+              <p className="text-sm p-2">{d.description}</p>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
