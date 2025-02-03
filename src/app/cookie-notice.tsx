@@ -1,8 +1,5 @@
 "use client";
 
-import { ToastAction } from "@/components/ui/toast";
-import { Toaster } from "@/components/ui/toaster";
-import { useToast } from "@/hooks/use-toast";
 import React, { useEffect, useState } from "react";
 
 export default function CookieNotice({
@@ -11,7 +8,9 @@ export default function CookieNotice({
   children: React.ReactNode;
 }) {
   const [cookieAck, setCookieAckInMem] = useState(
-    localStorage.getItem("__cookieAck") || ""
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("__cookieAck") || ""
+      : ""
   );
 
   if (cookieAck !== "true") {
@@ -35,7 +34,7 @@ export default function CookieNotice({
             <button
               className="font-bold text-nowrap px-2 py-1 border border-primary/20 rounded"
               onClick={() => {
-                localStorage.setItem("__cookieAck", "true");
+                window.localStorage.setItem("__cookieAck", "true");
                 setCookieAckInMem("true");
               }}
             >
