@@ -65,8 +65,12 @@ export const auth = initializeAuth(app, {
 });
 export const db = getFirestore();
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) return signInAnonymously(auth);
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    const { user: createdUser } = await signInAnonymously(auth);
+    console.log("Created guest user account with id", createdUser.uid);
+    return;
+  }
 
   if (typeof window !== "undefined") {
     setUserId(getAnalytics(app), user.uid);
