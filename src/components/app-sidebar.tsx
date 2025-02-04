@@ -39,7 +39,7 @@ import { BookText, Github, Lightbulb, Newspaper } from "lucide-react";
 
 const genkitLinks = [
   {
-    url: "https://github.com/mbleigh/genkit-by-example/issues/new?template=suggest-idea-for-example.md",
+    url: "https://github.com/genkit-ai/genkit-by-example/issues/new?template=suggest-idea-for-example.md",
     label: "Suggest an Idea",
     icon: Lightbulb,
   },

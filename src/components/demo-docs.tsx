@@ -52,7 +52,7 @@ export default function DemoDocs({
       >
         {!isMobile && <h1 className="text-2xl font-semibold flex-1">{name}</h1>}
         <a
-          href={`https://github.com/mbleigh/genkit-by-example/tree/main/src/app/${id}`}
+          href={`https://github.com/genkit-ai/genkit-by-example/tree/main/src/app/${id}`}
           target="_blank"
           className={isMobile ? "w-full" : undefined}
         >
