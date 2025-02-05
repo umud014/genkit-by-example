@@ -63,7 +63,6 @@ function condenseTextParts(message: MessageData) {
 }
 
 function reducer(state: State, action: Action): State {
-  console.log(action.type);
   switch (action.type) {
     case "SET_LOADING":
       return { ...state, isLoading: action.payload };
@@ -75,18 +74,11 @@ function reducer(state: State, action: Action): State {
         messages: [...state.messages, action.payload],
       };
     case "UPDATE_PENDING_MESSAGES":
-      console.log(state.pendingMessages, action.payload);
       return {
         ...state,
         pendingMessages: [...action.payload],
       };
     case "COMMIT_PENDING_MESSAGES":
-      console.log(
-        "messages:",
-        state.messages.length,
-        "pending:",
-        state.pendingMessages.length
-      );
       if (state.error) {
         return { ...state, pendingMessages: [], isLoading: false };
       }
@@ -148,11 +140,6 @@ export default function useAgent<T extends GenerateRequest = GenerateRequest>({
     const newMessages: MessageData[] = [];
     for await (const chunk of stream) {
       if (chunk.message) {
-        console.log(
-          chunk.message.role,
-          chunk.message.index,
-          chunk.message.content
-        );
         const message = chunk.message;
 
         // Get existing message at index
@@ -189,7 +176,6 @@ export default function useAgent<T extends GenerateRequest = GenerateRequest>({
           },
         });
       } else if (chunk.result) {
-        console.log("RESULT MESSAGES:", chunk.result.messages);
         dispatch({
           type: "SET_MESSAGES",
           payload: chunk.result.messages,
@@ -198,8 +184,6 @@ export default function useAgent<T extends GenerateRequest = GenerateRequest>({
     }
   };
 
-  console.log("MESSAGES:", state.messages);
-  console.log("PENDING:", state.pendingMessages[0]?.content?.[0].text);
   return {
     isLoading: state.isLoading,
     error: state.error,

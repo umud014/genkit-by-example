@@ -37,7 +37,6 @@ export function toReadableStream(
       function enqueue(data: any) {
         const out = `data: ${JSON.stringify(data)}\n\n`;
         controller.enqueue(out);
-        console.log(out);
       }
 
       try {
