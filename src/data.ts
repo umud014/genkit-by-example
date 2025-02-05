@@ -24,6 +24,7 @@ export interface DemoMetadata {
   added?: string;
   complexity?: number;
   files: (string | { name: string; combine: string[] })[];
+  draft?: boolean;
 }
 
 export const demos: DemoMetadata[] = [
@@ -71,6 +72,24 @@ export const demos: DemoMetadata[] = [
         combine: ["@/common/genkit-beta.ts", "api/route.ts"],
       },
     ],
+  },
+  {
+    id: "chatbot-hitl",
+    name: "Human-in-the-Loop",
+    description:
+      "A chatbot that uses interrupts to ask the user clarifying questions.",
+    tags: ["chat", "interrupts"],
+    added: "2025-02-03",
+    complexity: 3,
+    files: [
+      {
+        name: "api/route.ts",
+        combine: ["@/common/genkit-beta.ts", "api/route.ts"],
+      },
+      "constants.ts",
+      "schema.ts",
+    ],
+    draft: true,
   },
 ];
 

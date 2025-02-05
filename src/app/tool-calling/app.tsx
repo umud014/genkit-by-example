@@ -79,7 +79,7 @@ export default function ToolCallingChatbotApp() {
   return (
     <Chat
       endpoint="/tool-calling/api"
-      renderPart={(message, part) => {
+      renderPart={(part) => {
         if (part.toolResponse?.name === "getWeather")
           return <WeatherResponse {...(part.toolResponse.output as any)} />;
         if (part.toolResponse?.name === "rollDice")

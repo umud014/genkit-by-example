@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-import { z, MessageSchema, PartSchema } from "genkit";
-import { ToolRequestPartSchema, ToolResponsePartSchema } from "genkit/model";
+import Demo from "@/components/demo";
+import HitlChatbotConfig from "./config";
+import { demoMetadata } from "@/lib/demo-metadata";
+import HitlChatbotApp from "./app";
 
-export const GenerateRequestSchema = z.object({
-  system: z.array(PartSchema).optional(),
-  messages: z.array(MessageSchema).optional(),
-  prompt: z.array(PartSchema).optional(),
-  resume: z
-    .object({
-      respond: z.array(ToolResponsePartSchema).optional(),
-      restart: z.array(ToolRequestPartSchema).optional(),
-    })
-    .optional(),
-});
-export type GenerateRequest = z.infer<typeof GenerateRequestSchema>;
+export const generateMetadata = demoMetadata("chatbot-hitl");
+
+export default async function Page() {
+  return (
+    <Demo id="chatbot-hitl" Config={HitlChatbotConfig}>
+      <HitlChatbotApp />
+    </Demo>
+  );
+}

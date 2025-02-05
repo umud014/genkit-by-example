@@ -33,26 +33,37 @@ export function toReadableStream(
   }
 ) {
   return new ReadableStream({
-    async pull(controller) {
+    async start(controller) {
+      function enqueue(data: any) {
+        const out = `data: ${JSON.stringify(data)}\n\n`;
+        controller.enqueue(out);
+        console.log(out);
+      }
+
       try {
         for await (const chunk of response.stream) {
-          controller.enqueue(
-            `data: ${JSON.stringify({
-              message: options?.transform
-                ? options.transform(chunk)
-                : { ...chunk.toJSON(), output: chunk.output },
-            })}\n\n`
-          );
+          enqueue({
+            message: options?.transform
+              ? options.transform(chunk)
+              : { ...chunk.toJSON(), output: chunk.output },
+          });
         }
+
+        const result = await response.response;
+        console.dir(result.messages, { depth: null });
+
+        enqueue({
+          result: {
+            messages: [...result.messages],
+          },
+        });
       } catch (e) {
-        controller.enqueue(
-          `data: ${JSON.stringify({
-            error: { message: (e as Error).message },
-          })}`
-        );
+        enqueue({ error: { message: (e as Error).message } });
+      } finally {
+        setTimeout(() => {
+          controller.close();
+        }, 100);
       }
-      controller.enqueue(`data: {"result": null}`);
-      controller.close();
     },
   });
 }

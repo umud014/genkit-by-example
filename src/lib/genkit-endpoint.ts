@@ -94,6 +94,9 @@ export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
     const schema = options.schema || GenerateRequestSchema;
     const data = schema.parse(await request.json());
 
+    if (process.env.NODE_ENV === "development") {
+      console.dir(data, { depth: null });
+    }
     try {
       const response = await handler(data);
       return new NextResponse(toReadableStream(response), {

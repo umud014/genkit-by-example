@@ -29,7 +29,14 @@ import useAgent from "@/lib/use-agent";
 import type { MessageData, Part, Role } from "genkit";
 
 export interface PartRender {
-  (message: MessageData, part: Part, index: number): React.ReactNode | null;
+  (part: Part, info: PartRenderInfo): React.ReactNode | null;
+}
+
+export interface PartRenderInfo {
+  partIndex: number;
+  message: MessageData;
+  messageIndex: number;
+  messages: MessageData[];
 }
 
 function TextPart({ role, text }: { role: Role; text: string }) {
@@ -50,39 +57,26 @@ function TextPart({ role, text }: { role: Role; text: string }) {
 
 export default function Chat({
   endpoint,
+  agent,
   renderPart: customRenderPart,
 }: {
-  endpoint: string;
+  agent?: ReturnType<typeof useAgent>;
+  endpoint?: string;
   renderPart?: PartRender;
 }) {
-  const renderPart: PartRender = (message, part, index) => {
-    const custom = customRenderPart?.(message, part, index) || null;
+  const renderPart: PartRender = (part, info: PartRenderInfo) => {
+    const custom = customRenderPart?.(part, info) || null;
     if (custom !== null) return custom;
-    if (part.text) return <TextPart role={message.role} text={part.text} />;
+    if (part.text)
+      return <TextPart role={info.message.role} text={part.text} />;
   };
 
   const { config } = useContext(DemoConfig);
-  const {
-    messages: rawMessages,
-    resetConversation,
-    error,
-    isLoading,
-    send,
-  } = useAgent({
-    endpoint,
-  });
-  const messages = rawMessages.map((m) => ({
-    ...m,
-    content: m.content.reduce<Part[]>((out, part) => {
-      out;
-      if (part.text && out.at(-1)?.text) {
-        out.at(-1)!.text += part.text;
-      } else {
-        out.push(part);
-      }
-      return out;
-    }, []),
-  }));
+  const { messages, resetConversation, error, isLoading, send } =
+    agent ||
+    useAgent({
+      endpoint: endpoint!,
+    });
 
   const [input, setInput] = useState("");
   const bottomOfChat = useRef<HTMLDivElement>(null);
@@ -117,17 +111,22 @@ export default function Chat({
   return (
     <div className="flex flex-col h-full max-w-screen-sm mx-auto relative">
       <ScrollArea className="flex-1 p-4 pt-6 overflow-y-auto">
-        {rawMessages.map((message, index) => (
+        {messages.map((message, index) => (
           <div
             key={`${message.role}-${index}`}
             className={cn(
-              "flex", // Align items to the start
-              message.role === "user" ? "justify-end" : "justify-start"
+              "flex flex-col", // Align items to the start
+              message.role === "user" ? "items-end" : "items-start"
             )}
           >
             {message.content.map((p, i) => (
               <React.Fragment key={i}>
-                {renderPart(message, p, i)}
+                {renderPart(p, {
+                  message,
+                  messageIndex: index,
+                  partIndex: i,
+                  messages,
+                })}
               </React.Fragment>
             ))}
           </div>

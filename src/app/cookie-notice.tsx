@@ -23,18 +23,13 @@ export default function CookieNotice({
 }: {
   children: React.ReactNode;
 }) {
-  const [isClient, setIsClient] = useState(false);
-  const [cookieAck, setCookieAckInMem] = useState(
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("__cookieAck") || ""
-      : ""
-  );
+  const [cookieAck, setCookieAckInMem] = useState("");
 
   useEffect(() => {
-    setIsClient(true);
+    setCookieAckInMem(localStorage.getItem("__cookieAck") || "");
   }, []);
 
-  if (cookieAck === "true" || !isClient) return children;
+  if (cookieAck === "true") return children;
 
   return (
     <>

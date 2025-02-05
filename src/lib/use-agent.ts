@@ -19,6 +19,7 @@ import type { GenerateRequest } from "./schema";
 import type { GenerateResponseChunkData } from "genkit/model";
 import { useEffect, useReducer } from "react";
 import { post } from "./utils";
+import Message from "@/components/message";
 
 export interface AgentHookOptions {
   /** The URL endpoint of the agent e.g. `/api/agent`. */
@@ -41,6 +42,7 @@ type State = {
 type Action =
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_ERROR"; payload: ChunkData["error"] | null }
+  | { type: "SET_MESSAGES"; payload: MessageData[] }
   | { type: "ADD_USER_MESSAGE"; payload: MessageData }
   | { type: "UPDATE_PENDING_MESSAGES"; payload: MessageData[] }
   | { type: "COMMIT_PENDING_MESSAGES" }
@@ -50,8 +52,8 @@ function condenseTextParts(message: MessageData) {
   return {
     ...message,
     content: message.content.reduce((out, part) => {
-      if (out.at(-1)?.text && part.text) {
-        out.at(-1)!.text += part.text;
+      if (out[out.length - 1]?.text && part.text) {
+        out[out.length - 1] = { text: out[out.length - 1].text + part.text };
       } else {
         out.push(part);
       }
@@ -61,24 +63,40 @@ function condenseTextParts(message: MessageData) {
 }
 
 function reducer(state: State, action: Action): State {
+  console.log(action.type);
   switch (action.type) {
     case "SET_LOADING":
-      return { ...state, isLoading: action.payload, error: undefined };
+      return { ...state, isLoading: action.payload };
     case "SET_ERROR":
       return { ...state, error: action.payload };
     case "ADD_USER_MESSAGE":
-      return { ...state, messages: [...state.messages, action.payload] };
+      return {
+        ...state,
+        messages: [...state.messages, action.payload],
+      };
     case "UPDATE_PENDING_MESSAGES":
-      return { ...state, pendingMessages: action.payload };
+      console.log(state.pendingMessages, action.payload);
+      return {
+        ...state,
+        pendingMessages: [...action.payload],
+      };
     case "COMMIT_PENDING_MESSAGES":
-      if (!state.isLoading && state.pendingMessages.length) {
-        return {
-          ...state,
-          messages: [...state.messages, ...state.pendingMessages],
-          pendingMessages: [],
-        };
+      console.log(
+        "messages:",
+        state.messages.length,
+        "pending:",
+        state.pendingMessages.length
+      );
+      if (state.error) {
+        return { ...state, pendingMessages: [], isLoading: false };
       }
-      return state;
+
+      return {
+        ...state,
+        messages: [...state.messages, ...state.pendingMessages],
+        pendingMessages: [],
+        isLoading: false,
+      };
     case "RESET_CONVERSATION":
       return {
         ...state,
@@ -87,12 +105,19 @@ function reducer(state: State, action: Action): State {
         isLoading: false,
         error: undefined,
       };
+    case "SET_MESSAGES":
+      return {
+        ...state,
+        messages: [...action.payload],
+        pendingMessages: [],
+        isLoading: false,
+      };
     default:
       return state;
   }
 }
 
-export default function useAgent<T = GenerateRequest>({
+export default function useAgent<T extends GenerateRequest = GenerateRequest>({
   endpoint,
 }: AgentHookOptions) {
   const [state, dispatch] = useReducer(reducer, {
@@ -101,13 +126,6 @@ export default function useAgent<T = GenerateRequest>({
     isLoading: false,
     error: null,
   });
-
-  // Only commit messages when loading ends
-  useEffect(() => {
-    if (!state.isLoading) {
-      dispatch({ type: "COMMIT_PENDING_MESSAGES" });
-    }
-  }, [state.isLoading]);
 
   const send = async (request: T, userMessage?: MessageData) => {
     userMessage =
@@ -119,13 +137,22 @@ export default function useAgent<T = GenerateRequest>({
     }
 
     dispatch({ type: "SET_LOADING", payload: true });
-    const stream = post<T, GenerateResponseChunkData, GenerateResponseData>(
-      endpoint,
-      request
-    );
+    const stream = post<
+      T,
+      GenerateResponseChunkData,
+      GenerateResponseData & { messages: MessageData[] }
+    >(endpoint, {
+      ...request,
+      messages: request.messages?.filter((m) => m.role !== "system"),
+    });
     const newMessages: MessageData[] = [];
     for await (const chunk of stream) {
       if (chunk.message) {
+        console.log(
+          chunk.message.role,
+          chunk.message.index,
+          chunk.message.content
+        );
         const message = chunk.message;
 
         // Get existing message at index
@@ -133,17 +160,10 @@ export default function useAgent<T = GenerateRequest>({
 
         // If there's an existing message, concatenate the content
         if (existingMessage) {
-          const lastContent =
-            existingMessage.content[existingMessage.content.length - 1];
-          const newContent = message.content[0];
-
-          if (lastContent.text && newContent.text) {
-            // Concatenate text content
-            lastContent.text += newContent.text;
-          } else {
-            // Add as new content if different type
-            existingMessage.content.push(...message.content);
-          }
+          existingMessage.content = [
+            ...existingMessage.content,
+            ...message.content,
+          ];
         } else {
           // Create new message if none exists
           newMessages.splice(message.index!, 1, {
@@ -155,7 +175,10 @@ export default function useAgent<T = GenerateRequest>({
         // Create a new array reference to trigger update
         dispatch({
           type: "UPDATE_PENDING_MESSAGES",
-          payload: newMessages.map((msg) => ({ ...msg })),
+          payload: newMessages.map((msg) => ({
+            ...msg,
+            content: [...msg.content],
+          })),
         });
       } else if (chunk.error) {
         dispatch({
@@ -165,11 +188,18 @@ export default function useAgent<T = GenerateRequest>({
             status: chunk.error.status?.toString() || "",
           },
         });
+      } else if (chunk.result) {
+        console.log("RESULT MESSAGES:", chunk.result.messages);
+        dispatch({
+          type: "SET_MESSAGES",
+          payload: chunk.result.messages,
+        });
       }
     }
-    dispatch({ type: "SET_LOADING", payload: false });
   };
 
+  console.log("MESSAGES:", state.messages);
+  console.log("PENDING:", state.pendingMessages[0]?.content?.[0].text);
   return {
     isLoading: state.isLoading,
     error: state.error,
