@@ -58,7 +58,9 @@ export default function DemoContent({
               files={files}
             />
           </ScrollArea>
-          <div className="flex-1 min-w-[420px]">{children}</div>
+          <div className="flex-1 min-w-[420px] h-screen relative overflow-hidden">
+            {children}
+          </div>
         </div>
       </DemoContext>
     );
@@ -111,7 +113,7 @@ export default function DemoContent({
         {/* Mobile Content */}
         <div className="flex-1 overflow-hidden">
           {showDemo ? (
-            <div className="h-full">{children}</div>
+            <div className="h-full relative overflow-hidden">{children}</div>
           ) : (
             <ScrollArea className="h-full px-4">
               <DemoDocs

@@ -19,7 +19,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { RefreshCcw, Send, Sparkle, Trash } from "lucide-react"; // Or any other send icon you prefer
+import { Code, RefreshCcw, Send, Sparkle, Trash } from "lucide-react"; // Or any other send icon you prefer
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,7 @@ import Markdown from "react-markdown";
 import DemoConfig from "@/lib/demo-config";
 import useAgent from "@/lib/use-agent";
 import type { MessageData, Part, Role } from "genkit";
+import CodeBlock from "./code-block";
 
 export interface PartRender {
   (part: Part, info: PartRenderInfo): React.ReactNode | null;
@@ -79,6 +80,7 @@ export default function Chat({
     });
 
   const [input, setInput] = useState("");
+  const [viewSource, setViewSource] = useState(false);
   const bottomOfChat = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -87,7 +89,6 @@ export default function Chat({
   }, [messages]);
 
   const handleSend = () => {
-    console.log("handleSend called");
     return send({
       system: config?.system,
       messages,
@@ -108,9 +109,9 @@ export default function Chat({
     }
   };
 
-  return (
-    <div className="flex flex-col h-full max-w-screen-sm mx-auto relative">
-      <ScrollArea className="flex-1 p-4 pt-6 overflow-y-auto">
+  const ChatContent = () => {
+    return (
+      <>
         {messages.map((message, index) => (
           <div
             key={`${message.role}-${index}`}
@@ -144,6 +145,25 @@ export default function Chat({
           </div>
         )}
         <div ref={bottomOfChat} />
+      </>
+    );
+  };
+
+  const ChatSource = () => {
+    return (
+      <>
+        <h1 className="text-right text-xl font-semibold p-2">
+          Raw Message History
+        </h1>
+        <CodeBlock source={JSON.stringify(messages, null, 2)} />
+      </>
+    );
+  };
+
+  return (
+    <div className="flex flex-col h-full max-w-screen-sm mx-auto relative overflow-hidden">
+      <ScrollArea className="flex-1 p-4 pt-6 overflow-y-auto">
+        {viewSource ? <ChatSource /> : <ChatContent />}
       </ScrollArea>
 
       <div className="p-4 border-t border-gray-200 flex items-center">
@@ -170,20 +190,33 @@ export default function Chat({
           <span className="sr-only">Send</span>
         </Button>
       </div>
-      {messages.length > 0 && (
+
+      <div className="absolute top-4 left-2">
         <Button
           variant="outline"
           size="icon"
-          className="absolute top-4 left-2"
-          title="Reset Conversation"
+          title="View Raw Output"
           onClick={() => {
-            resetConversation();
-            inputRef.current?.focus();
+            setViewSource((cur) => !cur);
           }}
         >
-          <RefreshCcw />
+          <Code />
         </Button>
-      )}
+        {messages.length > 0 && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="m-2"
+            title="Reset Conversation"
+            onClick={() => {
+              resetConversation();
+              inputRef.current?.focus();
+            }}
+          >
+            <RefreshCcw />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

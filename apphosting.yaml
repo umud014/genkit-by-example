@@ -20,4 +20,4 @@ env:
   - variable: GCLOUD_LOCATION
     value: us-central1
   - variable: MAX_REQUESTS_HOURLY
-    value: "120"
+    value: "50"
