@@ -57,6 +57,7 @@ export function toReadableStream(
           },
         });
       } catch (e) {
+        console.error((e as Error).stack);
         enqueue({ error: { message: (e as Error).message } });
       } finally {
         setTimeout(() => {

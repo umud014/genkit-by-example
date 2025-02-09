@@ -109,9 +109,9 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export default function useAgent<T extends GenerateRequest = GenerateRequest>({
-  endpoint,
-}: AgentHookOptions) {
+export default function useAgent<
+  T extends GenerateRequest = GenerateRequest & { context: any }
+>({ endpoint }: AgentHookOptions) {
   const [state, dispatch] = useReducer(reducer, {
     messages: [],
     pendingMessages: [],

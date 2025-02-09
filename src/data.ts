@@ -91,6 +91,21 @@ export const demos: DemoMetadata[] = [
     ],
     draft: true,
   },
+  {
+    id: "action-context",
+    name: "Action Context",
+    description:
+      "A chatbot that uses action context to secure tool use and provide relevant context.",
+    tags: ["tools", "chat", "context"],
+    complexity: 2,
+    files: [
+      {
+        name: "api/route.ts",
+        combine: ["@/common/genkit-beta.ts", "api/route.ts"],
+      },
+      "data.ts",
+    ],
+  },
 ];
 
 export function findDemo(id: string): DemoMetadata | undefined {

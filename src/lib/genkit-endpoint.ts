@@ -26,7 +26,11 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-export type ChatHandler<T = z.infer<typeof GenerateRequestSchema>> = (
+const ChatRequestSchema = GenerateRequestSchema.extend({
+  context: z.record(z.any()).optional(),
+});
+
+export type ChatHandler<T = z.infer<typeof ChatRequestSchema>> = (
   data: T
 ) => GenerateStreamResponse<any> | Promise<GenerateStreamResponse<any>>;
 
@@ -91,7 +95,7 @@ export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
       });
     }
 
-    const schema = options.schema || GenerateRequestSchema;
+    const schema = options.schema || ChatRequestSchema;
     const data = schema.parse(await request.json());
 
     if (process.env.NODE_ENV === "development") {

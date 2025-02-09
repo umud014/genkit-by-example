@@ -60,10 +60,12 @@ export default function Chat({
   endpoint,
   agent,
   renderPart: customRenderPart,
+  data,
 }: {
   agent?: ReturnType<typeof useAgent>;
   endpoint?: string;
   renderPart?: PartRender;
+  data?: Record<string, any>;
 }) {
   const renderPart: PartRender = (part, info: PartRenderInfo) => {
     const custom = customRenderPart?.(part, info) || null;
@@ -93,6 +95,7 @@ export default function Chat({
       system: config?.system,
       messages,
       prompt: [{ text: input }],
+      ...data,
     });
   };
 
