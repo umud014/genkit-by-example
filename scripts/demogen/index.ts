@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { gemini20FlashExp, vertexAI } from "@genkit-ai/vertexai";
+import { gemini20Flash001, vertexAI } from "@genkit-ai/vertexai";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { genkit } from "genkit";
 import { join } from "path";
@@ -22,7 +22,7 @@ import { join } from "path";
 const GENKIT_HOME = process.env.GENKIT_HOME || "../genkit";
 
 const ai = genkit({
-  model: gemini20FlashExp,
+  model: gemini20Flash001,
   plugins: [
     vertexAI({ projectId: "bleigh-genkit-test", location: "us-central1" }),
   ],
