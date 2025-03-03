@@ -19,7 +19,6 @@ import { ai, z } from "@/common/genkit";
 // !!!START
 
 import genkitEndpoint from "@/lib/genkit-endpoint";
-import { CharacterSheetSchema } from "../schema";
 
 export const POST = genkitEndpoint(
   { schema: z.object({ prompt: z.string() }) },
