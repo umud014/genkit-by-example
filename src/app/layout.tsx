@@ -53,6 +53,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta
+          name="google-site-verification"
+          content="9JWnKEasD_LoBLFjpoJoktCbS8P4kYoV3HxbSDL0XBU"
+        />
+      </head>
       <body className={`${nunitoSans.className} antialiased dark`}>
         <SidebarProvider>
           <CookieNotice>
