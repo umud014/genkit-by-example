@@ -68,11 +68,11 @@ const MAX_REQUESTS_HOURLY = parseInt(
 export default function genkitEndpoint(handler: ChatHandler): Endpoint;
 export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
   options: ChatEndpointOptions<T>,
-  handler: ChatHandler
+  handler: ChatHandler<z.infer<T>>
 ): Endpoint;
 export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
   optionsOrHandler: ChatEndpointOptions<T> | ChatHandler<z.infer<T>>,
-  handler?: ChatHandler
+  handler?: ChatHandler<z.infer<T>>
 ): Endpoint {
   const options = handler ? (optionsOrHandler as ChatEndpointOptions) : {};
   handler = handler || (optionsOrHandler as ChatHandler);

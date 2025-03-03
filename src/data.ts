@@ -60,6 +60,19 @@ export const demos: DemoMetadata[] = [
     ],
   },
   {
+    id: "image-analysis",
+    name: "Image Analysis",
+    description:
+      "A multimodal example that identifies and draws bounding boxes around objects in an image.",
+    tags: ["multimodal"],
+    added: "2025-03-03",
+    complexity: 2,
+    files: [
+      { name: "api/route.ts", combine: ["@/common/genkit.ts", "api/route.ts"] },
+      "schema.ts",
+    ],
+  },
+  {
     id: "tool-calling",
     name: "Tool Calling",
     description:
