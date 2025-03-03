@@ -54,6 +54,7 @@ export function toReadableStream(
         enqueue({
           result: {
             messages: [...result.messages],
+            output: result.output,
           },
         });
       } catch (e) {

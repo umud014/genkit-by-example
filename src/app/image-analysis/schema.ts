@@ -11,26 +11,9 @@ export const ImageObjectSchema = z.object({
     .describe(
       "a list of one or more valid CSS named colors that make up the object, from most to least prevalent"
     ),
-  yMin: z
-    .number()
-    .describe(
-      "the percent vertical position of the top of the object within the image (0 = top of image, 100 = bottom of image)"
-    ),
-  yMax: z
-    .number()
-    .describe(
-      "the vertical position of the bottom of the object within the image"
-    ),
-  xMin: z
-    .number()
-    .describe(
-      "the horizontal position of the top of the object within the image"
-    ),
-  xMax: z
-    .number()
-    .describe(
-      "the horizontal position of the bottom of the object within the image"
-    ),
+  box2d: z
+    .array(z.number())
+    .describe("bounding box for the object in [y1,x1,y2,x2] format"),
 });
 
 export type ImageObject = z.infer<typeof ImageObjectSchema>;

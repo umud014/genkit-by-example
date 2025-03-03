@@ -16,30 +16,20 @@
 
 import { ai, z } from "@/common/genkit";
 import genkitEndpoint from "@/lib/genkit-endpoint";
-import { RouteHandler } from "next/dist/server/base-server";
-import { NextRequest, NextResponse } from "next/server";
 import { ImageObjectSchema } from "../schema";
 
 // !!!START
 
-const RequestSchema = z.object({
-  imageUri: z.string().describe("base64 image uri"),
-});
-
-export const POST = genkitEndpoint(
-  {
-    schema: z.object({ imageUrl: z.string().describe("base64 image uri") }),
-  },
-  async ({ imageUrl }) =>
-    ai.generateStream({
-      prompt: [
-        { text: "Identify all the objects in this image." },
-        { media: { url: imageUrl } },
-      ],
-      output: {
-        schema: z
+export const POST = genkitEndpoint(async ({ prompt, system }) =>
+  ai.generateStream({
+    system,
+    prompt,
+    output: {
+      schema: z.object({
+        objects: z
           .array(ImageObjectSchema)
           .describe("an array of objects that were detected in the image"),
-      },
-    })
+      }),
+    },
+  })
 );

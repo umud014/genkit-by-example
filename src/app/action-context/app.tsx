@@ -17,8 +17,6 @@
 "use client";
 import React, { useContext } from "react";
 import Chat from "@/components/chat";
-import { Sun, Cloud, CloudRain, CloudSnow } from "lucide-react";
-import Dice from "./dice-roll";
 import DemoConfig from "@/lib/demo-config";
 import CodeBlock from "@/components/code-block";
 
