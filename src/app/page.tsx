@@ -24,6 +24,13 @@ export const metadata: Metadata = {
   title: "Add GenAI to your web/mobile app",
   description:
     "Pre-built examples of using Firebase Genkit to build a variety of AI-powered features for Next.js applications.",
+  openGraph: {
+    images: [
+      `${
+        process.env.SITE_ORIGIN || "http://localhost:3000"
+      }/api/og?title=Practical%20GenAI%20 Demos`,
+    ],
+  },
 };
 
 export default function Home() {
