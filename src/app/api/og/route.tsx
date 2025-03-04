@@ -39,7 +39,9 @@ export async function GET(req: NextRequest) {
             padding: "40px",
             color: "white",
             fontFamily: "Nunito Sans", // Use Nunito Sans font (default)
-            backgroundImage: "url(http://localhost:3001/og_bg.png)",
+            backgroundImage: `url(${
+              process.env.SITE_ORIGIN || "http://localhost:3000"
+            }/og_bg.png)`,
           }}
         >
           <h1
@@ -65,7 +67,9 @@ export async function GET(req: NextRequest) {
       {
         width: 1200,
         height: 630,
-        // Removed fonts property - using default font
+        headers: {
+          "cache-control": "public, max-age=86400",
+        },
       }
     );
   } catch (error) {
