@@ -15,21 +15,30 @@
  */
 
 import { ai, z } from "@/common/genkit";
-import genkitEndpoint from "@/lib/genkit-endpoint";
-import { ImageObjectSchema } from "../schema";
 
 // !!!START
 
-export const POST = genkitEndpoint(async ({ prompt, system }) =>
-  ai.generateStream({
-    system,
-    prompt,
+import { simpleEndpoint } from "@/lib/genkit-endpoint";
+import type { Part } from "genkit";
+import { ImageObjectSchema } from "../schema";
+
+interface Input {
+  system: Part[]; // default: "Identify the objects in the provided image."
+  imageUrl: string; // base64-encoded data uri
+}
+
+export const POST = simpleEndpoint<Input>(async ({ system, imageUrl }) => {
+  const { output } = await ai.generate({
+    system, // default: "Identify all of the ojects in the provided image."
+    prompt: [{ media: { url: imageUrl } }], // base64-encoded data uri
     output: {
       schema: z.object({
         objects: z
           .array(ImageObjectSchema)
-          .describe("an array of objects that were detected in the image"),
+          .describe("list of objects in the image"),
       }),
     },
-  })
-);
+  });
+
+  return output;
+});

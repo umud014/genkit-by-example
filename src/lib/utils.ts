@@ -69,6 +69,39 @@ export function toReadableStream(
   });
 }
 
+export async function simplePost<ReqData = unknown, ResultData = unknown>(
+  path: string,
+  data: ReqData
+): Promise<ResultData> {
+  let token: string | undefined;
+  if (auth.currentUser) {
+    token = await getIdToken(auth.currentUser!);
+  }
+  if (!token) throw new Error("Must be authenticated to make API calls.");
+
+  logEvent("demo_api_call", { path });
+  const response = await fetch(path, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    if (response.headers.get("content-type") === "application/json") {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+    throw new Error(
+      `Unexpected HTTP error: ${(await response.text()).substring(0, 200)}`
+    );
+  }
+
+  return await response.json();
+}
+
 export async function* post<
   ReqData = unknown,
   ChunkData = unknown,

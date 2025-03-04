@@ -16,7 +16,7 @@
 
 "use client";
 
-import { post } from "@/lib/utils";
+import { post, simplePost } from "@/lib/utils";
 import { useState, useRef, useContext, useEffect } from "react";
 import React from "react";
 import type { ImageObject } from "./schema";
@@ -76,19 +76,18 @@ export default function ImageAnalysisApp() {
       return;
     }
 
-    const stream = post<
-      { prompt: any; system: any },
-      { output: Analysis },
-      { output: Analysis }
-    >("/image-analysis/api", {
-      system: config?.system,
-      prompt: [{ media: { url: await fileToDataUri(file) } }],
-    });
-    setLoading(true);
-    for await (const chunk of stream) {
-      if (chunk.result) setAnalysis(chunk.result.output);
+    try {
+      const analysis = await simplePost<
+        { imageUrl: string; system: any },
+        Analysis
+      >("/image-analysis/api", {
+        system: config?.system,
+        imageUrl: await fileToDataUri(file),
+      });
+      setAnalysis(analysis);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   // Function to load a sample image

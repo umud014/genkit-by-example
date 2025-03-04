@@ -65,6 +65,47 @@ const MAX_REQUESTS_HOURLY = parseInt(
   10
 );
 
+async function authorize(request: NextRequest): Promise<NextResponse | null> {
+  const idToken = request.headers.get("authorization")?.split(" ")[1];
+  if (!idToken) {
+    return errorResponse({
+      message: "You must be authenticated to make requests to demos.",
+      status: 403,
+    });
+  }
+  const { uid } = await adminAuth.verifyIdToken(idToken);
+  const numRequests = await checkRateLimit(uid);
+  if (numRequests > MAX_REQUESTS_HOURLY) {
+    return errorResponse({
+      status: 429,
+      message:
+        "You have reached your demo request limit for the hour. Come back later.",
+    });
+  }
+  return null;
+}
+
+export function simpleEndpoint<Input = any, Output = any>(
+  handler: (input: Input) => Promise<Output>
+) {
+  return async function (request: NextRequest): Promise<NextResponse> {
+    const authError = await authorize(request);
+    if (authError) return authError;
+
+    const input: Input = await request.json();
+
+    try {
+      const output = await handler(input);
+      return NextResponse.json(output);
+    } catch (e) {
+      return NextResponse.json(
+        { error: { message: (e as Error).toString() } },
+        { status: 500 }
+      );
+    }
+  };
+}
+
 export default function genkitEndpoint(handler: ChatHandler): Endpoint;
 export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
   options: ChatEndpointOptions<T>,
@@ -78,22 +119,8 @@ export default function genkitEndpoint<T extends z.ZodTypeAny = z.ZodTypeAny>(
   handler = handler || (optionsOrHandler as ChatHandler);
 
   return async (request: NextRequest): Promise<NextResponse> => {
-    const idToken = request.headers.get("authorization")?.split(" ")[1];
-    if (!idToken) {
-      return errorResponse({
-        message: "You must be authenticated to make requests to demos.",
-        status: 403,
-      });
-    }
-    const { uid } = await adminAuth.verifyIdToken(idToken);
-    const numRequests = await checkRateLimit(uid);
-    if (numRequests > MAX_REQUESTS_HOURLY) {
-      return errorResponse({
-        status: 429,
-        message:
-          "You have reached your demo request limit for the hour. Come back later.",
-      });
-    }
+    const authError = await authorize(request);
+    if (authError) return authError;
 
     const schema = options.schema || ChatRequestSchema;
     const data = schema.parse(await request.json());
