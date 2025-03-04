@@ -24,6 +24,15 @@ export function demoMetadata(id: string): () => Promise<Metadata> {
     return {
       title: demo.name,
       description: demo.description,
+      openGraph: {
+        images: [
+          `${process.env.SITE_ORIGIN || "http://localhost:3000"}/api/og?title=${
+            demo.name
+          }`,
+        ],
+        description: demo.description,
+        title: `Genkit by Example - ${demo.name}`,
+      },
     };
   };
 }
