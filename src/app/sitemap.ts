@@ -1,7 +1,11 @@
 import { demos } from "@/data";
 import type { MetadataRoute } from "next";
 
-const latestUpdate = demos.map((d) => d.added).at(-1);
+const latestUpdate = demos
+  .map((d) => d.added)
+  .filter((d) => !!d)
+  .sort()
+  .at(-1);
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
