@@ -71,7 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <Link href="/" className="flex justify-center">
                 <Image
                   src="/genkit_logo.png"
-                  alt="Firebase Genkit logo"
+                  alt="Genkit logo"
                   width={36}
                   height={36}
                 />

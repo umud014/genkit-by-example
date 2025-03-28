@@ -23,7 +23,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Add GenAI to your web/mobile app",
   description:
-    "Pre-built examples of using Firebase Genkit to build a variety of AI-powered features for Next.js applications.",
+    "Pre-built examples of using Genkit to build a variety of AI-powered features for Next.js applications.",
   openGraph: {
     images: [
       `${
@@ -39,14 +39,14 @@ export default function Home() {
       <h1 className="text-4xl text-center sm:mt-6 mb-4 font-semibold flex justify-center">
         <Image
           src="/banner.png"
-          alt="Firebase Genkit"
+          alt="Genkit"
           width={600}
           height={200}
         />
       </h1>
       <p>
         <b>Genkit by Example</b> is a collection of pre-built examples of using
-        Firebase Genkit to build a variety of AI-powered features for Next.js
+        Genkit to build a variety of AI-powered features for Next.js
         applications.
       </p>
       <p className="mt-4">

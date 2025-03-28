@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     default: "Genkit by Example",
   },
   description:
-    "Common patterns for apps incorporating GenAI, powered by Firebase Genkit.",
+    "Common patterns for apps incorporating GenAI, powered by Genkit.",
 };
 
 function App({ children }: { children: React.ReactNode }) {
